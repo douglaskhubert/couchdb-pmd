@@ -1,5 +1,7 @@
 # Tutorial Couch DB
-![CouchDB](static/couchdb.png?raw=true "Title")
+<p align="center">
+  <img width="300" height="300" src="static/couchdb.png?raw=true">
+</p>
 
 ## Processamento Massivo de Dados:
 **Autores:**
@@ -61,6 +63,7 @@ Clique no botão "Configure a Single Node" para configurar uma réplica inicial.
 Uma vez configurado, esta será a autenticação utilizada para criar novos usuários, databases, inserir dados etc. Seja via interface ou curl.
 
 ## Comandos Básicos
+
 
 
 
