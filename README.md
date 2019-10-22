@@ -25,6 +25,8 @@ Uma vez com o docker instalado e apropriadamente configurado, basta instalar a [
 docker pull couchdb:2.3.1
 docker run -p 5984:5984 -d couchdb
 ```
+Uma vez rodado ambos comandos, o Docker subirá uma instância do CouchDB.
+
 Por padrão, o CouchDB roda na porta 5984, neste caso, com a flag **-p** estamos expondo esta porta do container em nossa máquina/rede.
 
 A versão utilizada neste tutorial foi a latest, que até o presente dia (22/10/2019) é listada como a *latest* do repositório.
@@ -36,8 +38,6 @@ curl http://127.0.0.1:5984/
 > {"couchdb":"Welcome","version":"2.3.1","git_sha":"c298091a4","uuid":"6f1d0edf36f2ade32a3ac9faf3443dfe","features":["pluggable-storage-engines","scheduler"],"vendor":{"name":"The Apache Software Foundation"}}
 
 
-Uma vez rodado ambos comandos, o Docker subirá uma instância do CouchDB.
-
 PS: Caso deseje parar o container do docker, basta suspender o container com sua id
 ```
 docker stop <container_id>
@@ -47,11 +47,18 @@ docker stop <container_id>
 
 É possível configurar e utilizar o CouchDB através de duas maneiras:
 * **API** - Nativa;
-* Interface/Browser via **Fauxton**
+* Interface/Browser via **Fauxton**(antigo Futon)
 
 Na primeira execução, o Couch rodará no chamado *admin-party mode*, no qual não há um admnistrador definido.
 
+É possível configurar a primeira ocasião utilizando o Fauxton - [via interface](http://127.0.0.1:5984/_utils/#/setup).
+Clique no botão "Configure a Single Node" para configurar uma réplica inicial. Neste primeiro setup, não introduziremos réplicas ou mesmo clusters, que também são features suportadas pelo CouchDB
 
+É necessário introduzir e configurar um admin durante o setup, utilizaremos:
+**user**: admin
+**password**: 1234
+
+Uma vez configurado, esta será a autenticação utilizada para criar novos usuários, databases, inserir dados etc. Seja via interface ou curl.
 
 ## Comandos Básicos
 
