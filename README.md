@@ -5,7 +5,7 @@
 
 ## Processamento Massivo de Dados:
 **Autores:**
-* Douglas ...
+* Douglas Keiller Hubert
 * Henrique
 * Nícolas Ribeiro Vieira
 
@@ -65,7 +65,29 @@ Uma vez configurado, esta será a autenticação utilizada para criar novos usu�
 ## Comandos Básicos
 
 
+# Implementação de Propriedades no CouchDB
 
+Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa as seguintes propriedades:
+
+* Consistência
+* Dispinibilidade
+* Tolerância a particionamento
+
+Porém, antes disso, daremos uma olhada rápida sobre o que a documentação do CoachDB tem a nos dizer sobre
+o teorema CAP. Como uma imagem vale mais do que mil palavras:
+
+<p align="center">
+  <img width="300" height="300" src="static/cap-theorem-couchdb.png?raw=true">
+</p>
+
+Podemos ver que o CouchDB se encontra na intersecção entre **Tolerância a Particionamento** e **Disponibilidade**. Logo, podemos
+dizer que o CouchDB possui uma consistência eventual, em outras palavras, mais cedo ou mais tarde os dados estarão consistentes.
+
+## Consistência
+
+## Transações e propriedades ACID
+## Disponibilidade
+## Escalabilidade
 
 
 
