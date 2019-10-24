@@ -6,7 +6,7 @@
 ## Processamento Massivo de Dados:
 **Autores:**
 * Douglas Keiller Hubert
-* Henrique
+* Henrique Ferreira Ramos
 * Nícolas Ribeiro Vieira
 
 Professora Dra. Sahudy Montenegro González

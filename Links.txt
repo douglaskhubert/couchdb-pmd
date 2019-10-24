@@ -1,0 +1,16 @@
+https://www.ibm.com/developerworks/br/library/os-couchdb/os-couchdb-pdf.pdf
+
+http://guide.couchdb.org/editions/1/en/replication.html
+
+https://buildmedia.readthedocs.org/media/pdf/couchdb/master/couchdb.pdf
+
+http://docs.couchdb.org/en/master/replication/protocol.html
+
+https://guide.couchdb.org/draft/replication.html
+
+http://damienkatz.net/2012/01/the_future_of_couchdb.html
+
+https://web.archive.org/web/20111020074113/http://couchdb.apache.org/docs/overview.html
+
+http://mail-archives.apache.org/mod_mbox/couchdb-dev/201910.mbox/browser
+
