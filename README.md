@@ -16,6 +16,8 @@ O CouchDB é um banco de dados open source desenvolvido pela Apache™ orientado
 
 Por padrão, o CouchDB também suporta implementações com **RESTful API's** (e requests via curl, por exemplo), sendo uma alternativa para implementações diretas e agnósticas, devido à independência de qualquer necessidade de driver ou lib para consumir e utilizar o banco.
 
+A título de curiosidade, o nome Couch é um acrônimo para “Cluster of Unreliable Commodity Hardware”, ou seja, cluster para máquinas de baixo poder computacional.
+
 ## Instalação
 Requisitos:
 * macOS ou Linux;
@@ -70,7 +72,7 @@ Uma vez configurado, esta será a autenticação utilizada para criar novos usu�
 Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa as seguintes propriedades:
 
 * Consistência
-* Dispinibilidade
+* Disponibilidade
 * Tolerância a particionamento
 
 Porém, antes disso, daremos uma olhada rápida sobre o que a documentação do CoachDB tem a nos dizer sobre
@@ -84,6 +86,9 @@ Podemos ver que o CouchDB se encontra na intersecção entre **Tolerância a Par
 dizer que o CouchDB possui uma consistência eventual, em outras palavras, mais cedo ou mais tarde os dados estarão consistentes.
 
 ## Consistência
+O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente MVCC (Multiversion Concurrency Control), o que permite que diversos acessos sejam feitos ao mesmo dado de forma simultânea, sendo assim, teremos uma disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
+
+Sempre que um usuário queira realizar uma alterção nos dados, estes dados não serão bloqueados aos demais usuários do banco, porém será disponibilizada uma versão anterior dos dados, o que caracteriza a consistência eventual presente no CouchDB.
 
 ## Transações e propriedades ACID
 ## Disponibilidade
