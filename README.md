@@ -206,7 +206,6 @@ O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB com
 Uma tarefa de replicação será concluída assim que chegar ao final do feed de alterações. Se sua propriedade contínua estiver configurada como true, aguardará a exibição de novas alterações até que a tarefa seja cancelada. As tarefas de replicação também criam documentos de ponto de verificação no destino para garantir que uma tarefa reiniciada possa continuar de onde parou, por exemplo, após a falha.
 
 ## Transações e propriedades ACID
-
 O CouchDB implementa ACID em todas as características ACID que são atomicidade, consistência, isolamento e durabilidade. Como são geradas sempre novas versões do documento, muito similar ao que já ocorre com as ferramentas de controle de versão de arquivos como por exemplo o Git, os documentos não ficam travados e principalmente, com o estado consistente. Alterações nos documentos (adicionar, editar, deletar) são serializadas, exceto os blobs binários que são escritos concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem que esperar por escritas ou outras leituras. Os documentos são indexados em b-trees pelo seu nome (DocID) e um ID de sequência. Cada atualização para uma instância de banco de dados gera um novo número sequencial. IDs de sequência são usados depois para encontrar as mudanças de forma incremental em uma base de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente quando os documentos são salvos ou deletados.
 
 Quando os documentos do CouchDB são atualizados, todos os dados e índices associados são “descarregados” (flushed) no disco e o commit transacional sempre deixa o banco em um estado completamente consistente. Commits ocorrem em dois passos:
@@ -214,7 +213,6 @@ Quando os documentos do CouchDB são atualizados, todos os dados e índices asso
 2 – O cabeçalho do banco de dados atualizados é escrito em dois pedaços consecutivos e idênticos para compor os primeiros 4k do arquivo, então é “esvaziados” (flushed) no disco de maneira síncrona.
 
 Caso ocorra algum erro em uma destas etapas, ambas são abortadas e o estado anterior do documento é recuperado, o que garante as propriedades ACID dos dados.
-
 
 ## Disponibilidade
 
