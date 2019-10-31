@@ -190,7 +190,7 @@ Porém, antes disso, daremos uma olhada rápida sobre o que a documentação do 
 o teorema CAP. Como uma imagem vale mais do que mil palavras:
 
 <p align="center">
-  <img width="300" height="300" src="static/cap-theorem-couchdb.png?raw=true">
+  <img width="451" height="388" src="static/cap-theorem-couchdb.png?raw=true">
 </p>
 
 Podemos ver que o CouchDB se encontra na intersecção entre **Tolerância a Particionamento** e **Disponibilidade**. Logo, podemos
@@ -205,6 +205,12 @@ Sempre que um usuário queira realizar uma alterção nos dados, estes dados nã
 O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB comparará o banco de dados de origem e destino para determinar quais documentos diferem entre o banco de dados de origem e destino. Isso é feito seguindo os Feeds de alterações na origem e comparando os documentos com o destino. As alterações são enviadas para o destino em lotes onde eles podem introduzir conflitos. Os documentos que já existem no destino na mesma revisão não são transferidos. Como a exclusão de documentos é representada por uma nova revisão, um documento excluído na fonte também será excluído no destino.
 
 Uma tarefa de replicação será concluída assim que chegar ao final do feed de alterações. Se sua propriedade contínua estiver configurada como true, aguardará a exibição de novas alterações até que a tarefa seja cancelada. As tarefas de replicação também criam documentos de ponto de verificação no destino para garantir que uma tarefa reiniciada possa continuar de onde parou, por exemplo, após a falha.
+
+<p align="center">
+  <img width="416" height="264" src="static/replication.png?raw=true">
+</p>
+
+
 
 ## Transações e propriedades ACID
 O CouchDB implementa ACID em todas as características ACID que são atomicidade, consistência, isolamento e durabilidade. Como são geradas sempre novas versões do documento, muito similar ao que já ocorre com as ferramentas de controle de versão de arquivos como por exemplo o Git, os documentos não ficam travados e principalmente, com o estado consistente. Alterações nos documentos (adicionar, editar, deletar) são serializadas, exceto os blobs binários que são escritos concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem que esperar por escritas ou outras leituras. Os documentos são indexados em b-trees pelo seu nome (DocID) e um ID de sequência. Cada atualização para uma instância de banco de dados gera um novo número sequencial. IDs de sequência são usados depois para encontrar as mudanças de forma incremental em uma base de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente quando os documentos são salvos ou deletados.
