@@ -34,8 +34,8 @@ Requisitos:
 Uma vez com o docker instalado e apropriadamente configurado, basta instalar a [imagem disponibilizada do CouchDB no hub do docker](https://hub.docker.com/_/couchdb):
 
 ```
-docker pull couchdb:2.3.1
-docker run -p 5984:5984 -d couchdb
+$ docker pull couchdb:2.3.1
+$ docker run -p 5984:5984 -d couchdb
 ```
 Uma vez rodado ambos comandos, o Docker subirá uma instância do CouchDB.
 
@@ -45,14 +45,27 @@ A versão utilizada neste tutorial foi a latest, que até o presente dia (22/10/
 
 Para validar se a instância está rodando localmente e operante, basta executar:
 ```
-curl http://127.0.0.1:5984/
+$ curl http://127.0.0.1:5984/
 ```
-> {"couchdb":"Welcome","version":"2.3.1","git_sha":"c298091a4","uuid":"6f1d0edf36f2ade32a3ac9faf3443dfe","features":["pluggable-storage-engines","scheduler"],"vendor":{"name":"The Apache Software Foundation"}}
-
+```json
+ {
+     "couchdb": "Welcome",
+     "version": "2.3.1",
+     "git_sha": "c298091a4",
+     "uuid": "6f1d0edf36f2ade32a3ac9faf3443dfe",
+     "features": [
+         "pluggable-storage-engines",
+         "scheduler"
+     ],
+     "vendor": {
+         "name":"The Apache Software Foundation"
+     }
+ }
+```
 
 PS: Caso deseje parar o container do docker, basta suspender o container com sua id
 ```
-docker stop <container_id>
+$ docker stop <container_id>
 ```
 
 ## <a name="configuracao-basica"></a>Configuração Básica
@@ -75,21 +88,28 @@ Uma vez configurado, esta será a autenticação utilizada para criar novos usu�
 # <a name="comandos-basicos"></a>Comandos Básicos
 
 Para criar uma database via curl, utilizaremos o seguinte padrão:
+
 ```
-curl -X PUT http://usuario:senha@host:port/nome_database
+$ curl -X PUT http://usuario:senha@host:port/nome_database
 ```
 Note a presença do username com criado e a senha do mesmo, bem como o host (IP) e a porta do servidor local.
 
 Para criar a database chamada teste:
+
 ```
-curl -X PUT http://admin:1234@127.0.0.1:5984/teste
+$ curl -X PUT http://admin:1234@127.0.0.1:5984/teste
 ```
->{"ok":true}
+
+```json
+{"ok":true}
+```
 
 Para ver todas as dbs presentes no servidor:
+
 ```
-curl -X GET http://admin:1234@127.0.0.1:5984/_all_dbs
+$ curl -X GET http://admin:1234@127.0.0.1:5984/_all_dbs
 ```
+
 >["_global_changes","_replicator","_users","teste"]
 
 Perceba que todas as inputs retornam valores em formatos conhecidos - muitos na notação JSON.
@@ -98,9 +118,11 @@ Antes de realizar inserts, é recomendável gerar  *Universally Unique Identifie
 
 Retorna uma UUID:
 ```
-curl -X GET http://admin:1234@127.0.0.1:5984/_uuids
+$ curl -X GET http://admin:1234@127.0.0.1:5984/_uuids
 ```
->{"uuids":["21a2cc36dc2dd7edb69352fb570009f4"]}
+```json
+{"uuids":["21a2cc36dc2dd7edb69352fb570009f4"]}
+```
 
 É possível também retornar mais de uma chave para evitar *overflow* de requests na API:
 ```
@@ -146,12 +168,15 @@ Neste comando, é retornado os status de cluster, total de documentos, uma purge
 
 Para obter **todos** documentos presentes na view:
 ```
-curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
+$ curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
 ```
->{"total_rows":0,"offset":0,"rows":[]}
-
-
-
+```json
+{
+    "total_rows": 0,
+    "offset": 0,
+    "rows": []
+}
+```
 
 #<a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
 
