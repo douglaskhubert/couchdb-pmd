@@ -66,6 +66,40 @@ Uma vez configurado, esta será a autenticação utilizada para criar novos usu�
 
 ## Comandos Básicos
 
+Para criar uma database via curl, utilizaremos o seguinte padrão:
+```
+curl -X PUT http://usuario:senha@host:port/nome_database
+```
+Note a presença do username com criado e a senha do mesmo, bem como o host (IP) e a porta do servidor local.
+
+Para criar a database chamada teste:
+```
+curl -X PUT http://admin:1234@127.0.0.1:5984/teste
+```
+>{"ok":true}
+
+Para ver todas as dbs presentes no servidor:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/_all_dbs
+```
+>["_global_changes","_replicator","_users","teste"]
+
+Perceba que todas as inputs retornam valores em formatos conhecidos - muitos na notação JSON.
+
+Antes de realizar inserts, é recomendável gerar  *Universally Unique Identifiers* (UUIDs) da própria instância do Couch - essa abordagem é ideal para que não haja chaves duplicadas dentro do banco.
+
+Retorna uma UUID:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/_uuids
+```
+>{"uuids":["21a2cc36dc2dd7edb69352fb570009f4"]}
+
+É possível também retornar mais de uma chave para evitar *overflow* de requests na API:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/_uuids?count=10
+```
+
+
 
 # Implementação de Propriedades no CouchDB
 
