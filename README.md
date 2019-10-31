@@ -199,6 +199,10 @@ dizer que o CouchDB possui uma consistência eventual, em outras palavras, mais 
 ## Consistência
 O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente MVCC (Multiversion Concurrency Control), o que permite que diversos acessos sejam feitos ao mesmo dado de forma simultânea, sendo assim, teremos uma disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
 
+<p align="center">
+  <img width="636" height="209" src="static/recordlock.png?raw=true">
+</p>
+
 Sempre que um usuário queira realizar uma alterção nos dados, estes dados não serão bloqueados aos demais usuários do banco, porém será disponibilizada uma versão anterior dos dados, o que caracteriza a consistência eventual usando replicação incremental presente no CouchDB. O sistema de replicação do CouchDB vem com detecção e resolução automáticas de conflitos. Quando o CouchDB detecta que um documento foi alterado em dois bancos de dados, sinaliza esse documento como estando em conflito, como se estivessem em um sistema de controle de versão regular.
 
 ## Replicação
