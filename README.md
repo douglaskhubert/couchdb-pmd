@@ -15,7 +15,8 @@ Professora Dra. Sahudy Montenegro González
 
 * [Introdução](#introducao)
 * [Instalação](#instalacao)
-    * [Configuração Básica](#configuracao-basica)
+    * [Utilizando Docker](#docker)
+* [Configuração Básica](#configuracao-basica)
 * [Comandos Básicos](#comandos-basicos)
 * [Implementação de Propriedades](#implementacao-propriedades)
 
@@ -27,9 +28,17 @@ Por padrão, o CouchDB também suporta implementações com **RESTful API's** (e
 A título de curiosidade, o nome Couch é um acrônimo para “Cluster of Unreliable Commodity Hardware”, ou seja, cluster para máquinas de baixo poder computacional.
 
 # <a name="instalacao"></a>Instalação
+
+Vamos mostrar como realizar a instalação do CouchDB utilizando Docker e Docker-Compose.
+
 Requisitos:
 * macOS ou Linux;
 * Docker;
+
+Opcional:
+* Docker-Compose
+
+## <a name="docker"></a> Utilizando Docker
 
 Uma vez com o docker instalado e apropriadamente configurado, basta instalar a [imagem disponibilizada do CouchDB no hub do docker](https://hub.docker.com/_/couchdb):
 
@@ -47,6 +56,7 @@ Para validar se a instância está rodando localmente e operante, basta executar
 ```
 $ curl http://127.0.0.1:5984/
 ```
+
 ```json
  {
      "couchdb": "Welcome",
@@ -66,6 +76,37 @@ $ curl http://127.0.0.1:5984/
 PS: Caso deseje parar o container do docker, basta suspender o container com sua id
 ```
 $ docker stop <container_id>
+```
+
+## <a name="docker-compose"></a>Utilizando Docker-Compose
+
+A utilização do docker-compose é opcional, porém essa ferramenta facilitará bastante a nossa vida na hora de nossos exercícios práticos com um cluster de instâncias CouchDB.
+A partir de um único arquivo conseguimos subir todas as instâncias com seus respectivos arquivos de configuração.
+
+Crie um arquivo chamado docker-compose.yaml e coloque o seguinte conteúdo dentro:
+
+```yaml
+version: "3.0"
+services:
+  couchdb:
+    image: couchdb:2.3.1
+    ports:
+      - 5984:5984
+```
+
+Vamos incrementar esse arquivo quando falarmos sobre replicação de dados e sharding.
+
+Para iniciar nosso servidor CouchDB, digite o comando:
+
+```
+$ docker-compose up
+```
+
+Aguarde o download da imagem e pronto.
+
+Para validar se a instância está rodando localmente e operante, basta executar:
+```
+$ curl http://127.0.0.1:5984/
 ```
 
 ## <a name="configuracao-basica"></a>Configuração Básica
