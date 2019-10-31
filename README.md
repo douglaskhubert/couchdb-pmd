@@ -16,6 +16,7 @@ Professora Dra. Sahudy Montenegro González
 * [Introdução](#introducao)
 * [Instalação](#instalacao)
     * [Utilizando Docker](#docker)
+    * [Utilizando Docker-Compose](#docker-compose)
 * [Configuração Básica](#configuracao-basica)
 * [Comandos Básicos](#comandos-basicos)
 * [Implementação de Propriedades](#implementacao-propriedades)
