@@ -111,35 +111,36 @@ curl -X GET http://admin:1234@127.0.0.1:5984/_uuids?count=10
 Para utilizarmos a DB teste, basta utilizar na mesma lógica de uma API rest - se adiciona o nome da database um pouco antes do request. Neste tópico, o CouchDB leva vantagem sobre qualquer sistema SQL tradicional pela simplicidade. Em um sistema SQL tradicional seria necessário criar novos clientes de conexão em um aplicacão para se consumir mais de uma database.
 
 Com um simples comando, é possível observar as informações macros da Database:
+
+```json
+$curl -X GET http://admin:1234@127.0.0.1:5984/teste   
+{
+    "db_name": "teste",
+    "purge_seq": "0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjPlsQBJhgNA6v____ezEhnwqnsAUfefkLoFEHX7CalrgKibj1tdkgKQTLLHa2dSAkhNPX41DiA18XjVJDIkyUMUZAEAuYBi9g",
+    "update_seq": "0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjMlMiTJ____PyuRAYeCJAUgmWSPX40DSE08fjUJIDX1eNXksQBJhgYgBVQ2n5C6BRB1-wmpOwBRd5-QugcQdSD3ZQEAiJJi9g",
+    "sizes": {
+        "file": 33960,
+        "external": 0,
+        "active": 0
+    },
+    "other": {
+        "data_size": 0
+    },
+    "doc_del_count": 0,
+    "doc_count": 0,
+    "disk_size": 33960,
+    "disk_format_version": 7,
+    "data_size": 0,
+    "compact_running": false,
+    "cluster": {
+        "q":8,
+        "n":1,
+        "w":1,
+        "r":1
+    },
+    "instance_start_time": "0"
+}
 ```
-curl -X GET http://admin:1234@127.0.0.1:5984/teste 
-```
->{
->    "db_name": "teste",
->    "purge_seq": "0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjPlsQBJhgNA6v____ezEhnwqnsAUfefkLoFEHX7CalrgKibj1tdkgKQTLLHa2dSAkhNPX41DiA18XjVJDIkyUMUZAEAuYBi9g",
->    "update_seq": "0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjMlMiTJ____PyuRAYeCJAUgmWSPX40DSE08fjUJIDX1eNXksQBJhgYgBVQ2n5C6BRB1-wmpOwBRd5-QugcQdSD3ZQEAiJJi9g",
->    "sizes": {
->        "file": 33960,
->        "external": 0,
->        "active": 0
->    },
->    "other": {
->        "data_size": 0
->    },
->    "doc_del_count": 0,
->    "doc_count": 0,
->    "disk_size": 33960,
->    "disk_format_version": 7,
->    "data_size": 0,
->    "compact_running": false,
->    "cluster": {
->        "q":8,
->        "n":1,
->        "w":1,
->        "r":1
->    },
->    "instance_start_time": "0"
->}
 
 Neste comando, é retornado os status de cluster, total de documentos, uma purge_sequence, quantidade de documentos, tamanho em disco e informações da instância.
 
