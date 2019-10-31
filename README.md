@@ -11,14 +11,22 @@
 
 Professora Dra. Sahudy Montenegro González
 
-## Introdução
+## Tabela de conteúdo
+
+* [Introdução](#introducao)
+* [Instalação](#instalacao)
+    * [Configuração Básica](#configuracao-basica)
+* [Comandos Básicos](#comandos-basicos)
+* [Implementação de Propriedades](#implementacao-propriedades)
+
+# <a name="introducao"></a>Introdução
 O CouchDB é um banco de dados open source desenvolvido pela Apache™ orientado à documentos. O CouchDB utiliza nativamente **json** para armazenamento de dados, **JavaScript** para sua query language, incluindo features como MapReduce e view configuration.
 
 Por padrão, o CouchDB também suporta implementações com **RESTful API's** (e requests via curl, por exemplo), sendo uma alternativa para implementações diretas e agnósticas, devido à independência de qualquer necessidade de driver ou lib para consumir e utilizar o banco.
 
 A título de curiosidade, o nome Couch é um acrônimo para “Cluster of Unreliable Commodity Hardware”, ou seja, cluster para máquinas de baixo poder computacional.
 
-## Instalação
+# <a name="instalacao"></a>Instalação
 Requisitos:
 * macOS ou Linux;
 * Docker;
@@ -47,7 +55,7 @@ PS: Caso deseje parar o container do docker, basta suspender o container com sua
 docker stop <container_id>
 ```
 
-## Configuração Básica
+## <a name="configuracao-basica"></a>Configuração Básica
 
 É possível configurar e utilizar o CouchDB através de duas maneiras:
 * **API** - Nativa;
@@ -64,7 +72,7 @@ Clique no botão "Configure a Single Node" para configurar uma réplica inicial.
 
 Uma vez configurado, esta será a autenticação utilizada para criar novos usuários, databases, inserir dados etc. Seja via interface ou curl.
 
-## Comandos Básicos
+# <a name="comandos-basicos"></a>Comandos Básicos
 
 Para criar uma database via curl, utilizaremos o seguinte padrão:
 ```
@@ -106,7 +114,32 @@ Com um simples comando, é possível observar as informações macros da Databas
 ```
 curl -X GET http://admin:1234@127.0.0.1:5984/teste 
 ```
->{"db_name":"teste","purge_seq":"0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjPlsQBJhgNA6v____ezEhnwqnsAUfefkLoFEHX7CalrgKibj1tdkgKQTLLHa2dSAkhNPX41DiA18XjVJDIkyUMUZAEAuYBi9g","update_seq":"0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjMlMiTJ____PyuRAYeCJAUgmWSPX40DSE08fjUJIDX1eNXksQBJhgYgBVQ2n5C6BRB1-wmpOwBRd5-QugcQdSD3ZQEAiJJi9g","sizes":{"file":33960,"external":0,"active":0},"other":{"data_size":0},"doc_del_count":0,"doc_count":0,"disk_size":33960,"disk_format_version":7,"data_size":0,"compact_running":false,"cluster":{"q":8,"n":1,"w":1,"r":1},"instance_start_time":"0"}
+>{
+>    "db_name": "teste",
+>    "purge_seq": "0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjPlsQBJhgNA6v____ezEhnwqnsAUfefkLoFEHX7CalrgKibj1tdkgKQTLLHa2dSAkhNPX41DiA18XjVJDIkyUMUZAEAuYBi9g",
+>    "update_seq": "0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjMlMiTJ____PyuRAYeCJAUgmWSPX40DSE08fjUJIDX1eNXksQBJhgYgBVQ2n5C6BRB1-wmpOwBRd5-QugcQdSD3ZQEAiJJi9g",
+>    "sizes": {
+>        "file": 33960,
+>        "external": 0,
+>        "active": 0
+>    },
+>    "other": {
+>        "data_size": 0
+>    },
+>    "doc_del_count": 0,
+>    "doc_count": 0,
+>    "disk_size": 33960,
+>    "disk_format_version": 7,
+>    "data_size": 0,
+>    "compact_running": false,
+>    "cluster": {
+>        "q":8,
+>        "n":1,
+>        "w":1,
+>        "r":1
+>    },
+>    "instance_start_time": "0"
+>}
 
 Neste comando, é retornado os status de cluster, total de documentos, uma purge_sequence, quantidade de documentos, tamanho em disco e informações da instância.
 
@@ -119,7 +152,7 @@ curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
 
 
 
-# Implementação de Propriedades no CouchDB
+#<a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
 
 Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa as seguintes propriedades:
 
@@ -143,9 +176,35 @@ O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
 Sempre que um usuário queira realizar uma alterção nos dados, estes dados não serão bloqueados aos demais usuários do banco, porém será disponibilizada uma versão anterior dos dados, o que caracteriza a consistência eventual presente no CouchDB.
 
 ## Transações e propriedades ACID
+
+O modelo de atualização de registros do CouchDB é otimista, ou seja, assume que não haverá conflitos de atualizações.
+
+The CouchDB document update model is lockless and optimistic. Document edits are made by client applications loading documents, applying changes, and saving them back to the database. If another client editing the same document saves their changes first, the client gets an edit conflict error on save. To resolve the update conflict, the latest document version can be opened, the edits reapplied and the update tried again.
+
 ## Disponibilidade
 ## Escalabilidade
 
 
 
+---
+## Recomendação de estudo e organização:
 
+Esta seção é temporária e será removida após a revisão e versão final do tutorial.
+
+* IMPORTANTE: Especificar a versão do software utilizada para criar o tutorial!
+* Introdução: instalação e configuração do cluster, visão geral e comandos básicos.
+* Arquiteturas de distribuição de dados e replicação.
+* Implementação de propriedades: 
+* Consistência (por exemplo: implementa conceitos relacionados ao quorum?, implementa vector clocks e version vectors?)
+    Fonte: https://docs.couchdb.org/en/stable/cluster/sharding.html#quorum
+* Transações (é ACID em qual granularidade dos dados?)
+    Fonte: https://docs.couchdb.org/en/stable/intro/overview.html#acid-properties
+* Disponibilidade
+* Escalabilidade
+* Quando usar? Exponha como empresas estão usando esse software!
+* Quando não usar?
+
+Podem ser incluídos conceitos relacionados a estas propriedades encontrados na documentação do sistema, mesmo não vistos em sala de aula. 
+A proposta acima pode ser modificada e estendida.
+
+Usem o material das aulas sobre implementação de propriedades no mongoDB, neo4j, etc. como guia para elaboração do projeto.
