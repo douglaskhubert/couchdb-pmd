@@ -207,7 +207,7 @@ O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB com
 Uma tarefa de replicação será concluída assim que chegar ao final do feed de alterações. Se sua propriedade contínua estiver configurada como true, aguardará a exibição de novas alterações até que a tarefa seja cancelada. As tarefas de replicação também criam documentos de ponto de verificação no destino para garantir que uma tarefa reiniciada possa continuar de onde parou, por exemplo, após a falha.
 
 <p align="center">
-  <img width="416" height="264" src="static/replication.png?raw=true">
+  <img width="416" height="264" src="static/Replication.png?raw=true">
 </p>
 
 
