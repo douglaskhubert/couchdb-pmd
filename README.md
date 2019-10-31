@@ -66,6 +66,58 @@ Uma vez configurado, esta será a autenticação utilizada para criar novos usu�
 
 ## Comandos Básicos
 
+Para criar uma database via curl, utilizaremos o seguinte padrão:
+```
+curl -X PUT http://usuario:senha@host:port/nome_database
+```
+Note a presença do username com criado e a senha do mesmo, bem como o host (IP) e a porta do servidor local.
+
+Para criar a database chamada teste:
+```
+curl -X PUT http://admin:1234@127.0.0.1:5984/teste
+```
+>{"ok":true}
+
+Para ver todas as dbs presentes no servidor:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/_all_dbs
+```
+>["_global_changes","_replicator","_users","teste"]
+
+Perceba que todas as inputs retornam valores em formatos conhecidos - muitos na notação JSON.
+
+Antes de realizar inserts, é recomendável gerar  *Universally Unique Identifiers* (UUIDs) da própria instância do Couch - essa abordagem é ideal para que não haja chaves duplicadas dentro do banco.
+
+Retorna uma UUID:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/_uuids
+```
+>{"uuids":["21a2cc36dc2dd7edb69352fb570009f4"]}
+
+É possível também retornar mais de uma chave para evitar *overflow* de requests na API:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/_uuids?count=10
+```
+### Utilizando a DB Teste
+
+Para utilizarmos a DB teste, basta utilizar na mesma lógica de uma API rest - se adiciona o nome da database um pouco antes do request. Neste tópico, o CouchDB leva vantagem sobre qualquer sistema SQL tradicional pela simplicidade. Em um sistema SQL tradicional seria necessário criar novos clientes de conexão em um aplicacão para se consumir mais de uma database.
+
+Com um simples comando, é possível observar as informações macros da Database:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/teste 
+```
+>{"db_name":"teste","purge_seq":"0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjPlsQBJhgNA6v____ezEhnwqnsAUfefkLoFEHX7CalrgKibj1tdkgKQTLLHa2dSAkhNPX41DiA18XjVJDIkyUMUZAEAuYBi9g","update_seq":"0-g1AAAAEzeJzLYWBg4MhgTmHgzcvPy09JdcjLz8gvLskBCjMlMiTJ____PyuRAYeCJAUgmWSPX40DSE08fjUJIDX1eNXksQBJhgYgBVQ2n5C6BRB1-wmpOwBRd5-QugcQdSD3ZQEAiJJi9g","sizes":{"file":33960,"external":0,"active":0},"other":{"data_size":0},"doc_del_count":0,"doc_count":0,"disk_size":33960,"disk_format_version":7,"data_size":0,"compact_running":false,"cluster":{"q":8,"n":1,"w":1,"r":1},"instance_start_time":"0"}
+
+Neste comando, é retornado os status de cluster, total de documentos, uma purge_sequence, quantidade de documentos, tamanho em disco e informações da instância.
+
+Para obter **todos** documentos presentes na view:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
+```
+>{"total_rows":0,"offset":0,"rows":[]}
+
+
+
 
 # Implementação de Propriedades no CouchDB
 
