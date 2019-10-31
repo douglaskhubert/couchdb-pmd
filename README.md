@@ -88,10 +88,18 @@ dizer que o CouchDB possui uma consistência eventual, em outras palavras, mais 
 ## Consistência
 O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente MVCC (Multiversion Concurrency Control), o que permite que diversos acessos sejam feitos ao mesmo dado de forma simultânea, sendo assim, teremos uma disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
 
-Sempre que um usuário queira realizar uma alterção nos dados, estes dados não serão bloqueados aos demais usuários do banco, porém será disponibilizada uma versão anterior dos dados, o que caracteriza a consistência eventual presente no CouchDB.
+Sempre que um usuário queira realizar uma alterção nos dados, estes dados não serão bloqueados aos demais usuários do banco, porém será disponibilizada uma versão anterior dos dados, o que caracteriza a consistência eventual usando replicação incremental presente no CouchDB. O sistema de replicação do CouchDB vem com detecção e resolução automáticas de conflitos. Quando o CouchDB detecta que um documento foi alterado em dois bancos de dados, sinaliza esse documento como estando em conflito, como se estivessem em um sistema de controle de versão regular.
+
+O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB comparará o banco de dados de origem e destino para determinar quais documentos diferem entre o banco de dados de origem e destino. Isso é feito seguindo os Feeds de alterações na origem e comparando os documentos com o destino. As alterações são enviadas para o destino em lotes onde eles podem introduzir conflitos. Os documentos que já existem no destino na mesma revisão não são transferidos. Como a exclusão de documentos é representada por uma nova revisão, um documento excluído na fonte também será excluído no destino.
+
+Uma tarefa de replicação será concluída assim que chegar ao final do feed de alterações. Se sua propriedade contínua estiver configurada como true, aguardará a exibição de novas alterações até que a tarefa seja cancelada. As tarefas de replicação também criam documentos de ponto de verificação no destino para garantir que uma tarefa reiniciada possa continuar de onde parou, por exemplo, após a falha.
 
 ## Transações e propriedades ACID
+
+
 ## Disponibilidade
+
+
 ## Escalabilidade
 
 

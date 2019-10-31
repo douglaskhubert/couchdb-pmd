@@ -14,3 +14,6 @@ https://web.archive.org/web/20111020074113/http://couchdb.apache.org/docs/overvi
 
 http://mail-archives.apache.org/mod_mbox/couchdb-dev/201910.mbox/browser
 
+https://www.oreilly.com/library/view/couchdb-the-definitive/9780596158156/ch02.html
+
+https://guide.couchdb.org/draft/consistency.html
