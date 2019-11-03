@@ -190,7 +190,9 @@ Retorna uma UUID:
 $ curl -X GET http://admin:1234@127.0.0.1:5984/_uuids
 ```
 ```json
-{"uuids":["21a2cc36dc2dd7edb69352fb570009f4"]}
+{
+  "uuids":["8a2519d228e6ea9b4dcd1e7f37000976"]
+}
 ```
 
 É possível também retornar mais de uma chave para evitar *overflow* de
@@ -198,7 +200,7 @@ requests na API:
 ```
 curl -X GET http://admin:1234@127.0.0.1:5984/_uuids?count=10
 ```
-### Utilizando a DB Teste
+### Visualizando a DB Teste
 
 Para utilizarmos a DB teste, basta utilizar na mesma lógica de uma API rest -
 se adiciona o nome da database um pouco antes do request. Neste tópico, o
@@ -253,9 +255,92 @@ $ curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
     "rows": []
 }
 ```
->{"total_rows":0,"offset":0,"rows":[]}
+### Insert
 
-Agora, vamos inserir um novo documento na database *teste*.
+Agora, vamos inserir o seguinte documento na database **teste**:
+```json
+{
+  "nome": "Nicolas", 
+  "idade": 26,
+  "notas": [5, 6, 7]
+}
+```
+Com este documento - é possível executar um comando *HTTP* do tipo *PUT*, utilizando a mesma unique id informada  acima:
+```
+curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984/teste/"8a2519d228e6ea9b4dcd1e7f37000976" -d'{"nome": "Nicolas","idade": 26, "notas": [5, 6, 7]}'
+```
+
+O curl acima informa que o tipo de conteúdo do *request* será json, bem como a rota **/teste/uuid** informa a database e a id informada, respectivamente. 
+Logo em seguida, há o conteúdo da mensagem que trata do objeto a ser inserido.
+
+```json
+{
+  "ok":true,
+  "id":"8a2519d228e6ea9b4dcd1e7f37000976",
+  "rev":"1-891f8a9577b2e71fe57eccddbd26cae3"
+}
+```
+* A chave "ok" sinaliza se houve sucesso na inserção do documento.
+* A chave "id" te retorna o id do objeto criado (neste caso, o mesmo informado)
+* A chave "rev" te retorna a revisão/versão do documento inserido.
+
+### Visualizando todos os registros:
+
+Para visualizar os registros, toma-se como premissa sempre uma operação do tipo *GET* na database específica.
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
+```
+```json
+{
+  "total_rows":1,
+  "offset":0,
+  "rows":[{
+            "id":"8a2519d228e6ea9b4dcd1e7f37000976",
+            "key":"8a2519d228e6ea9b4dcd1e7f37000976",
+            "value": {
+                      "rev":"1-891f8a9577b2e71fe57eccddbd26cae3"
+            }
+          }
+        ]
+}
+```
+
+Neste caso, retorna-se o número total de rows, o ID de cada um dos documentos e a revisão na qual cada um se encontra.
+
+Caso fosse desejado também incluir os dados de cada um dos documentos - é necessário sinalizar uma query adicional
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs?include_docs=true
+```
+
+### Visualizando um registro em específico:
+
+Para obter um documento em específico - basta-se sinalizar a id do mesmo após a database:
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/teste/8a2519d228e6ea9b4dcd1e7f37000976
+```
+
+```json
+
+{
+  "_id":"8a2519d228e6ea9b4dcd1e7f37000976",
+  "_rev":"1-891f8a9577b2e71fe57eccddbd26cae3",
+  "nome":"Nicolas",
+  "idade":26,
+  "notas":[5,6,7]
+}
+```
+
+Observa-se a presença de um campo chave para a estrutura normal do CouchDB - o número da revisão (*_rev*), que é um registro necessário para todas as operações.
+
+
+
+### Delete
+
+Como de praxe, para deletar um registro no CouchDB, basta realizar uma operação do tipo delete. Entretanto devido a natureza do CouchDB, não é possível simplesmente deletar os arquivos informando somente a ID - todas operações no CouchDB são feitas também informando a revisão - para que se haja consistência durante a operação.
+
+Neste caso
+
+
 
 
 # <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
