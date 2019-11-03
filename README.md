@@ -110,12 +110,13 @@ curl -X GET http://admin:1234@127.0.0.1:5984/teste
 
 Neste comando, é retornado os status de cluster, total de documentos, uma purge_sequence, quantidade de documentos, tamanho em disco e informações da instância.
 
-Para obter **todos** documentos presentes na view:
+Para obter **todos** documentos presentes na database *teste*:
 ```
 curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
 ```
 >{"total_rows":0,"offset":0,"rows":[]}
 
+Agora, vamos inserir um novo documento na database *teste*.
 
 
 
