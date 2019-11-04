@@ -15,11 +15,21 @@ Professora Dra. Sahudy Montenegro González
 
 * [Introdução](#introducao)
 * [Instalação](#instalacao)
-    * [Utilizando Docker](#docker)
-    * [Utilizando Docker-Compose](#docker-compose)
+    * [Docker](#docker)
+    * [Docker-Compose](#docker-compose)
 * [Configuração Básica](#configuracao-basica)
 * [Comandos Básicos](#comandos-basicos)
+    * [Inserindo um registro (POST)](#comandos-basicos-insert)
+    * [Visualizando todos os registros (GET)](#comandos-basicos-getall)
+    * [Visualizando um registro em específico (GET)](#comandos-basicos-get)
+    * [Deletando um registro (DELETE)](#comandos-basicos-delete)
 * [Implementação de Propriedades](#implementacao-propriedades)
+* [Consistência de dados no CouchDB](#consistencia)
+* [Replicação de dados no CouchDB](#replicacao)
+    * [Tipos de Replicação](#tipos-replicacao)
+* [MapReduce em CouchDB? Faz sentido?](#mapreduce)
+* [Agregando dados](#agregacao)
+* [Particionamento de dados (sharding)](#sharding)
 
 # <a name="introducao"></a>Introdução
 O CouchDB é um banco de dados open source desenvolvido pela Apache™
@@ -48,7 +58,7 @@ Requisitos:
 Opcional:
 * Docker-Compose
 
-## <a name="docker"></a> Utilizando Docker
+## <a name="docker"></a> Docker
 
 Uma vez com o docker instalado e apropriadamente configurado, basta instalar a
 [imagem disponibilizada do CouchDB no hub do docker](https://hub.docker.com/_/couchdb):
@@ -92,7 +102,7 @@ sua id
 $ docker stop <container_id>
 ```
 
-## <a name="docker-compose"></a>Utilizando Docker-Compose
+## <a name="docker-compose"></a>Docker-Compose
 
 A utilização do docker-compose é opcional, porém essa ferramenta facilitará
 bastante a nossa vida na hora de nossos exercícios práticos com um cluster de
@@ -255,7 +265,7 @@ $ curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
     "rows": []
 }
 ```
-### Insert
+### <a name="comandos-basicos-insert"></a>Inserindo um registro (POST)
 
 Agora, vamos inserir o seguinte documento na database **teste**:
 ```json
@@ -284,7 +294,7 @@ Logo em seguida, há o conteúdo da mensagem que trata do objeto a ser inserido.
 * A chave "id" te retorna o id do objeto criado (neste caso, o mesmo informado)
 * A chave "rev" te retorna a revisão/versão do documento inserido.
 
-### Visualizando todos os registros:
+### <a name="comandos-basicos-getall"></a> Visualizando todos os registros (GET)
 
 Para visualizar os registros, toma-se como premissa sempre uma operação do tipo *GET* na database específica.
 ```
@@ -312,7 +322,7 @@ Caso fosse desejado também incluir os dados de cada um dos documentos - é nece
 curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs?include_docs=true
 ```
 
-### Visualizando um registro em específico:
+### <a name="comandos-basicos-get"></a>Visualizando um registro em específico (GET)
 
 Para obter um documento em específico - basta-se sinalizar a id do mesmo após a database:
 ```
@@ -334,7 +344,7 @@ Observa-se a presença de um campo chave para a estrutura normal do CouchDB - o 
 
 
 
-### Delete
+### <a name="comandos-basicos-delete"></a>Deletando um registro (DELETE)
 
 Como de praxe, para deletar um registro no CouchDB, basta realizar uma operação do tipo delete. Entretanto devido a natureza do CouchDB, não é possível simplesmente deletar os arquivos informando somente a ID - todas operações no CouchDB são feitas também informando a revisão - para que se haja consistência durante a operação.
 
