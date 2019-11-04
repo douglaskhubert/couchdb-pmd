@@ -24,12 +24,32 @@ Professora Dra. Sahudy Montenegro González
     * [Visualizando um registro em específico (GET)](#comandos-basicos-get)
     * [Deletando um registro (DELETE)](#comandos-basicos-delete)
 * [Implementação de Propriedades](#implementacao-propriedades)
+    * [Teorema CAP](#cap)
+    * [Transações e propriedades ACID](#acid)
+    * [Consistência](#acid-consistencia)
+    * [Propriedades BASE](#base)
+    * Durabilidade Relaxada e o CouchDB?
 * [Consistência de dados no CouchDB](#consistencia)
 * [Replicação de dados no CouchDB](#replicacao)
     * [Tipos de Replicação](#tipos-replicacao)
-* [MapReduce em CouchDB? Faz sentido?](#mapreduce)
-* [Agregando dados](#agregacao)
+    * Quóruns 
+        * Leitura e Escrita
+        * Eleição de um novo Coordenador
+    * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
+    * Balanceamento de Carga (Loadbalancing)
 * [Particionamento de dados (sharding)](#sharding)
+* Combinando replicação e sharding no CouchDB
+* [Agregando dados](#agregacao)
+* Praticando com CouchDB
+    * Criando o nosso cluster
+        * Docker-Compose (localmente)
+        * Google Cloud Platform (ambiente núvem)
+    * ...
+    * Brincando com *queries* e verbos HTTP
+        * Inserindo registros
+        * Consultando registros
+        * Atualizando registros
+
 
 # <a name="introducao"></a>Introdução
 O CouchDB é um banco de dados open source desenvolvido pela Apache™
@@ -350,34 +370,62 @@ Como de praxe, para deletar um registro no CouchDB, basta realizar uma operaçã
 
 Neste caso
 
-
-
-
 # <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
 
-Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa
-as seguintes propriedades:
+Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa propriedades
+relacionadas à banco de dados.
 
-* Consistência
-* Disponibilidade
-* Tolerância a particionamento
+## <a name="cap"></a> Teorema CAP
 
-Porém, antes disso, daremos uma olhada rápida sobre o que a documentação do
-CoachDB tem a nos dizer sobre o teorema CAP. Como uma imagem vale mais do que
-mil palavras:
+O [teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem) afirma que em um
+sistema de armazenamento de dados distribuído não podemos prover simultâneamente
+3 das seguintes garantias: **C**onsistência, Disponibilidade (**A**vailability) e 
+tolerância a **P**articionamento
+
+O CouchDB se encaixa em algum lugar entre Disponibilidade e Tolerância a
+particionamento, o que significa que sua **consistência** é **eventual**, ou seja,
+mais cedo ou mais tarde, o banco de dados estará consistente.
 
 <p align="center">
   <img width="451" height="388" src="static/cap-theorem-couchdb.png?raw=true">
+  <br>
+  <i style="font-size: 14px">fonte: https://docs.couchdb.org/en/stable/intro/consistency.html#the-cap-theorem</i>
 </p>
 
-Podemos ver que o CouchDB se encontra na intersecção entre **Tolerância a
-Particionamento** e **Disponibilidade**. Logo, podemos dizer que o CouchDB
-possui uma consistência eventual, em outras palavras, mais cedo ou mais tarde
-os dados estarão consistentes.
+## <a name="acid"></a> Transações e propriedades ACID
 
-## Consistência
+O CouchDB implementa todas as [propriedades ACID](https://en.wikipedia.org/wiki/ACID)
+(atomicidade, consistência, isolamento e durabilidade. Como são geradas sempre novas versões
+do documento, muito similar ao modo como funcionam as ferramentas de controle de
+versão ([Git](https://git-scm.com/), por exemplo), os documentos não ficam travados e
+principalmente, com o estado consistente. Alterações nos documentos (adicionar,
+editar, deletar) são serializadas, exceto os [blobs binários](https://en.wikipedia.org/wiki/Binary_large_object)
+que são escritos concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem
+que esperar por escritas ou outras leituras. Os documentos são indexados em b-
+trees pelo seu nome (DocID) e um ID de sequência. Cada atualização para uma
+instância de banco de dados gera um novo número sequencial. IDs de sequência
+são usados depois para encontrar as mudanças de forma incremental em uma base
+de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente
+quando os documentos são salvos ou deletados.
+
+Quando os documentos do CouchDB são atualizados, todos os dados e índices
+associados são “descarregados” (flushed) no disco e o *commit* transacional
+sempre deixa o banco em um estado completamente consistente. *Commits* ocorrem
+em dois passos:
+1. Todos os dados dos documentos e atualizações em índices associados são “
+esvaziados” (flushed) no disco de maneira síncrona.
+2. O cabeçalho do banco de dados atualizados é escrito em dois pedaços
+consecutivos e idênticos para compor os primeiros 4k do arquivo, então é “
+esvaziados” (flushed) no disco de maneira síncrona.
+
+Caso ocorra algum erro em uma destas etapas, ambas são abortadas e o estado
+anterior do documento é recuperado, o que garante as propriedades ACID dos
+dados.
+
+## <a name="acid-consistencia"></a> Consistência
 O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
-MVCC (Multiversion Concurrency Control), o que permite que diversos acessos
+[MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation)
+(Multiversion Concurrency Control), o que permite que diversos acessos
 sejam feitos ao mesmo dado de forma simultânea, sendo assim, teremos uma
 disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
 
@@ -387,12 +435,18 @@ disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
 
 Sempre que um usuário queira realizar uma alterção nos dados, estes dados não
 serão bloqueados aos demais usuários do banco, porém será disponibilizada uma
-versão anterior dos dados, o que caracteriza a consistência eventual usando
+versão anterior dos dados, o que caracteriza a **consistência eventual** usando
 replicação incremental presente no CouchDB. O sistema de replicação do CouchDB
 vem com detecção e resolução automáticas de conflitos. Quando o CouchDB
 detecta que um documento foi alterado em dois bancos de dados, sinaliza esse
 documento como estando em conflito, como se estivessem em um sistema de
 controle de versão regular.
+
+
+## Disponibilidade
+
+## Escalabilidade
+
 
 ## Replicação
 O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB
@@ -415,42 +469,6 @@ por exemplo, após a falha.
 <p align="center">
   <img width="416" height="264" src="static/Replication.png?raw=true">
 </p>
-
-
-
-## Transações e propriedades ACID
-O CouchDB implementa ACID em todas as características ACID que são atomicidade,
-consistência, isolamento e durabilidade. Como são geradas sempre novas versões
-do documento, muito similar ao que já ocorre com as ferramentas de controle de
-versão de arquivos como por exemplo o Git, os documentos não ficam travados e
-principalmente, com o estado consistente. Alterações nos documentos (adicionar,
-editar, deletar) são serializadas, exceto os blobs binários que são escritos
-concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem
-que esperar por escritas ou outras leituras. Os documentos são indexados em b-
-trees pelo seu nome (DocID) e um ID de sequência. Cada atualização para uma
-instância de banco de dados gera um novo número sequencial. IDs de sequência
-são usados depois para encontrar as mudanças de forma incremental em uma base
-de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente
-quando os documentos são salvos ou deletados.
-
-Quando os documentos do CouchDB são atualizados, todos os dados e índices
-associados são “descarregados” (flushed) no disco e o commit transacional
-sempre deixa o banco em um estado completamente consistente. Commits ocorrem
-em dois passos:
-1. Todos os dados dos documentos e atualizações em índices associados são “
-esvaziados” (flushed) no disco de maneira síncrona.
-2. O cabeçalho do banco de dados atualizados é escrito em dois pedaços
-consecutivos e idênticos para compor os primeiros 4k do arquivo, então é “
-esvaziados” (flushed) no disco de maneira síncrona.
-
-Caso ocorra algum erro em uma destas etapas, ambas são abortadas e o estado
-anterior do documento é recuperado, o que garante as propriedades ACID dos
-dados.
-
-## Disponibilidade
-
-
-## Escalabilidade
 
 
 
