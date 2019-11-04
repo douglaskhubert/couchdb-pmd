@@ -470,6 +470,62 @@ por exemplo, após a falha.
   <img width="416" height="264" src="static/Replication.png?raw=true">
 </p>
 
+# Quando usar o CouchDB?
+
+Se as pessoas envolvidas em seu projeto já possuem um conhecimento sólido em
+tecnologias web, como consumo de API's REST, a curva de aprendizagem para o CouchDB
+deverá ser bem tranquila.
+
+Devido ao fato de o CouchDB ser um banco de dados orientado à documentos, também
+pode ser indicado para casos de uso onde existe a necessidade de dados *schemaless*,
+em outras palavras, quando os dados podem ter diferentes estruturas e tipos.
+
+Existem vários fatores para a escolha de um banco de dados para um projeto, não falaremos
+de todos aqui, mas alguns pontos que devem ser observados é o comportamento e a forma que
+o banco de dados em questão implementa as propriedades ACID, qual sua posição referente
+ao teorema CAP, qual propriedade do teorema o banco de dados escolhe relaxar, entre
+outros conceitos que apresentamos nesta parte teórica do tutorial.
+
+# Praticando com CouchDB
+
+Nesta parte do tutorial, vamos mostrar como montar um cluster de instâncias
+de CouchDB.
+
+Primeiramente, crie um diretório chamado cluster-couchdb:
+
+```
+$ mkdir cluster-couchdb
+$ cd cluster-couchdb
+```
+
+Depois de criar o diretório, vamos criar um arquivo dentro dele chamado 
+**docker-compose.yaml** e dentro vamos colocar uma instância do CouchDB:
+
+```yaml
+version: "3.0"
+services:
+  couchdb:
+    image: couchdb:2.3.1
+    ports:
+      - 5984:5984
+```
+
+Vamos definir que nosso cluster terá um número **q** de shards, que é a quantidade
+de nós em que o CouchDB vai particionar nossos dados e um número n de réplicas,
+que é a quantidade de cópias que cada dado terá. Portanto, para este tutorial,
+teremos que **q = 9** e **n = 3**, o que significa que nossos dados ficarão
+particionados em 9 nós e com 3 réplicas.
+
+Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
+que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
+quando falamos de consenso, também estamos falando de garantir a confiabilidade
+do sistema, no nosso caso, de leituras e escritas. Uma solução bastante conhecida
+para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)).
+No nosso caso, queremos um quorum de leitura e escrita para garantir que todos
+os nós cheguem em um consenso sobre o que ler e o que escrever.  O CouchDB já
+tem uma fórmula de quorum nativa: um mais metade do número de "cópias
+relevantes". As cópias relevantes são definidas diferentemente para leitura e
+escrita.
 
 
 ---
