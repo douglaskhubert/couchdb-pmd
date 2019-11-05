@@ -22,6 +22,7 @@ Professora Dra. Sahudy Montenegro González
     * [Inserindo um registro (POST)](#comandos-basicos-insert)
     * [Visualizando todos os registros (GET)](#comandos-basicos-getall)
     * [Visualizando um registro em específico (GET)](#comandos-basicos-get)
+    * [Atualizando um registro (PUT)](#comandos-basicos-update)
     * [Deletando um registro (DELETE)](#comandos-basicos-delete)
 * [Implementação de Propriedades](#implementacao-propriedades)
     * [Teorema CAP](#cap)
@@ -285,7 +286,7 @@ $ curl -X GET http://admin:1234@127.0.0.1:5984/teste/_all_docs
     "rows": []
 }
 ```
-### <a name="comandos-basicos-insert"></a>Inserindo um registro (POST)
+### <a name="comandos-basicos-insert"></a>Inserindo um registro (PUT)
 
 Agora, vamos inserir o seguinte documento na database **teste**:
 ```json
@@ -363,12 +364,95 @@ curl -X GET http://admin:1234@127.0.0.1:5984/teste/8a2519d228e6ea9b4dcd1e7f37000
 Observa-se a presença de um campo chave para a estrutura normal do CouchDB - o número da revisão (*_rev*), que é um registro necessário para todas as operações.
 
 
+### <a name="comandos-basicos-update"></a>Atualizando um registro (PUT)
+
+Para atualizar um registro, é necessário especificar duas coisas:
+* ID do registro;
+* ID da revisão a ser atualizada;
+
+
+```
+curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984/teste/"8a2519d228e6ea9b4dcd1e7f37000976" -d'{"nome": "Nicolas","idade": 27, "notas": [9, 9, 10], "_rev": "1-891f8a9577b2e71fe57eccddbd26cae3"}' 
+```
+Por gentileza notar o atributo *_rev* informado, que especifica qual versão está sendo atualizada.
+Por fim - o CouchDB retorna o status, o ID do registro atualizado e o novo ID da revisão, neste caso, iniciada com o prefixo **2-**, que indica que o documentose encontra na segunda versão.
+
+```json
+{
+  "ok":true,
+  "id":"8a2519d228e6ea9b4dcd1e7f37000976",
+  "rev":"2-e374d0fcab5b47ab0a2a04178fc274c3"
+}
+```
+
+Caso fossemos checar novamente este registro, obteríamos o seguinte tópico:
+
+```
+curl -X GET http://admin:1234@127.0.0.1:5984/teste/8a2519d228e6ea9b4dcd1e7f37000976
+```
+
+```json
+{
+  "_id":"8a2519d228e6ea9b4dcd1e7f37000976",
+  "_rev":"2-e374d0fcab5b47ab0a2a04178fc274c3",
+  "nome":"Nicolas",
+  "idade":27,
+  "notas":[9,9,10]
+}
+```
+
+É possível atualiar os registros continuamente, entretanto, toda operação de update performar um overwrite em todo o registro.
+
+Na ocasião, um curl do tipo:
+```
+curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984/teste/"8a2519d228e6ea9b4dcd1e7f37000976" -d'{"idade": 28, "_rev": "2-e374d0fcab5b47ab0a2a04178fc274c3"}'
+```
+Atualizaria o registro para o seguinte:
+
+```json
+{
+  "_id":"8a2519d228e6ea9b4dcd1e7f37000976",
+  "_rev":"3-6560152a526f93bab04c5d3b6446777e",
+  "idade":28
+}
+```
+Se, hipoteticamente, algum outro cliente tentasse atualizar o registro da database no mesmo momento - utilizando o ID da segunda revisão (_rev: 2-...).
+```
+curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984/teste/"8a2519d228e6ea9b4dcd1e7f37000976" -d'{"idade": 28,"aprovado": true, "_rev": "2-e374d0fcab5b47ab0a2a04178fc274c3"}'
+```
+O cliente apontaria o seguinte:
+```json
+{
+  "error":"conflict",
+  "reason":"Document update conflict."
+}
+```
+Pois a revisão especificada do documento não é a última/mais recente.
+
 
 ### <a name="comandos-basicos-delete"></a>Deletando um registro (DELETE)
 
-Como de praxe, para deletar um registro no CouchDB, basta realizar uma operação do tipo delete. Entretanto devido a natureza do CouchDB, não é possível simplesmente deletar os arquivos informando somente a ID - todas operações no CouchDB são feitas também informando a revisão - para que se haja consistência durante a operação.
+Como de praxe, para deletar um registro no CouchDB, basta realizar uma operação do tipo **DELETE**. Entretanto devido a natureza do CouchDB, não é possível simplesmente deletar os arquivos informando somente a ID, as operações de DELETE também necessitam do parâmetro de revisão - para que se haja consistência durante a operação.
+```
+curl -X DELETE http://admin:1234@127.0.0.1:5984/teste/8a2519d228e6ea9b4dcd1e7f37000976\?rev\=4-6d74341cddb1dfb648e6d459764b8d55
+```
+O retorno do CouchDB indica basicamente que o registro foi deletado, e também é gerado um número de revisão novo.
+```json
+{
+  "ok":true,
+  "id":"8a2519d228e6ea9b4dcd1e7f37000976",
+  "rev":"5-408bcf8c726e71091890cfe06bb7756d"
+}
+```
+ Os registros no CouchDB nunca deixam de existir, somente são ocultados de todas as queries e views.
 
-Neste caso
+ Na ocorrência de uma busca por esta ID, o CouchDB informa que este registro foi deletado:
+```json
+{
+  "error":"not_found",
+  "reason":"deleted"
+}
+```
 
 # <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
 
