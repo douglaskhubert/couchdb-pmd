@@ -17,6 +17,7 @@ Professora Dra. Sahudy Montenegro González
 * [Instalação](#instalacao)
     * [Docker](#docker)
     * [Docker-Compose](#docker-compose)
+* [Terminologia](#Terminologia)
 * [Configuração Básica](#configuracao-basica)
 * [Comandos Básicos](#comandos-basicos)
     * [Inserindo um registro (POST)](#comandos-basicos-insert)
@@ -158,6 +159,24 @@ Para validar se a instância está rodando localmente e operante, basta executar
 ```
 $ curl http://127.0.0.1:5984/
 ```
+
+## <a name="terminologia"></a>Terminologia
+
+Há uma certa semelhança entre as termologias do **CouchDB** e o **MongoDB**, confira abaixo as terminologias:
+
+CouchDB | MongoDB | RDBMS
+--- | --- | ---
+ Database | Database | Database
+- | Collection | Table
+Document | Document | Row
+View | Index | Index
+Value | Field | Column
+MapReduce/Views | MapReduce & Aggreagation | Join
+
+Por padrão, o CouchDB tem uma database composta de vários documentos, sendo essencialmente diferente dos casos de um RDBMS tradicional ou mesmo o MongoDB - que cada coleção organiza seus próprios documentos e há uma junção de documentos dentro de uma mesma coleçao.
+
+Além disso, o CouchDB explora muito o padrão de queries para otimização e refinamento - queries que são frequentemente utilizadas ou mesmo estão distribuídas em diversos clusters exigem a criação de uma View por padrão. Uma View pode ser composta de funções Map e Reduce em JavaScript nativo - muito semelhante ao abordado no MongoDB.
+
 
 ## <a name="configuracao-basica"></a>Configuração Básica
 
