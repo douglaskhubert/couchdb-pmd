@@ -17,7 +17,7 @@ Professora Dra. Sahudy Montenegro González
 * [Instalação](#instalacao)
     * [Docker](#docker)
     * [Docker-Compose](#docker-compose)
-* [Terminologia](#Terminologia)
+* [Terminologia](#terminologia)
 * [Configuração Básica](#configuracao-basica)
 * [Comandos Básicos](#comandos-basicos)
     * [Inserindo um registro (POST)](#comandos-basicos-insert)
