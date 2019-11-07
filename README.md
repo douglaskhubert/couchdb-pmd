@@ -289,9 +289,8 @@ Docker-Compose.
 Requisitos:
 * macOS ou Linux;
 * Docker;
-
-Opcional:
 * Docker-Compose
+* [jq](https://github.com/stedolan/jq/wiki/Installation)
 
 ## <a name="docker"></a> Docker
 
@@ -712,7 +711,7 @@ Existe uma forma de configurar o cluster via interface Fauxton, inclusive achamo
 muito bom sobre isso.
 
 Porém optamos por fazer via API. Criamos um script de configuração que pode ser
-encontrado em `cluster-couchdb/setup-cluster.sh` neste [repositório](https://github.com/douglaskhubert/couchdb-pmd)
+encontrado em `cluster-couchdb/setup-cluster.sh` neste [repositório](https://github.com/douglaskhubert/couchdb-pmd).
 ## <a name="exercicios-cluster"></a> Exercícios no Cluster
 
 Criamos uma lista para praticar a interação com o cluster e também fixar alguns conceitos.   
