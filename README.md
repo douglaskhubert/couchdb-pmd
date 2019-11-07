@@ -25,6 +25,7 @@ Professora Dra. Sahudy Montenegro González
     * [Visualizando um registro em específico (GET)](#comandos-basicos-get)
     * [Atualizando um registro (PUT)](#comandos-basicos-update)
     * [Deletando um registro (DELETE)](#comandos-basicos-delete)
+    * [Map Reduce, Views e Mango](#map-reduce)
 * [Implementação de Propriedades](#implementacao-propriedades)
     * [Teorema CAP](#cap)
     * [Transações e propriedades ACID](#acid)
@@ -162,14 +163,14 @@ $ curl http://127.0.0.1:5984/
 
 ## <a name="terminologia"></a>Terminologia
 
-Há uma certa semelhança entre as termologias do **CouchDB** e o **MongoDB**, confira abaixo as terminologias:
+Há uma certa semelhança entre os termos do **CouchDB** e o **MongoDB**, confira abaixo as terminologias:
 
 CouchDB | MongoDB | RDBMS
 --- | --- | ---
  Database | Database | Database
-- | Collection | Table
-Document | Document | Row
-View | Index | Index
+Document | Collection | Table
+" | Document | Row
+Index | Index | Index
 Value | Field | Column
 MapReduce/Views | MapReduce & Aggreagation | Join
 
@@ -472,6 +473,34 @@ O retorno do CouchDB indica basicamente que o registro foi deletado, e também �
   "reason":"deleted"
 }
 ```
+
+
+### <a name="map-reduce"></a>Map Reduce, Views e Mango
+
+O CouchDB também implementa queries de filtro - à partir da versão 2.0 do CouchDB, há duas opções para os que desejam filtrar algum resultado:
+* Criar uma *View* (Função JavaScript) - que implemente um Map, contendo ou não o Reduce;
+* Filtrar via *Mango Query*;
+
+No geral, o CouchDB atualmente recomenda  utilizar os filtros, por padrão, com o Mango. Ainda assim - ambas situações exigem um post na específica DB a ser obtida.
+
+```json
+curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984/teste/_find " -d'{
+    "selector": {
+        "idade": {"$gt": 20}
+    },
+    "limit": 2,
+    "skip": 0,
+    "execution_stats": true
+}
+```
+**indentação quebrada para facilitar a leitura*
+
+* **selector**: Filtro com as condicionais - muito semelhante ao padrão encontrado no mongo.
+* **limit**: Quantos documentos (no total) serão exibidos;
+* **skip**: Quantos documentos (dos primeiros) serão pulados;
+* **execution_stats**: Retorna as estatísticas da query (performance);
+
+Nota-se também a presença de uma operação do tipo POST pela primeira vez - muito utilizada para setup de alguns tópicos pontuais do couch, bem como os filtros mango
 
 # <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
 
