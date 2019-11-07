@@ -30,7 +30,8 @@ Professora Dra. Sahudy Montenegro González
     * [Teorema CAP](#cap)
     * [Transações e propriedades ACID/BASE](#acid)
     * [Consistência de Dados](#acid-consistencia)
-    * Durabilidade Relaxada e o CouchDB?
+    * [Disponibilidade](#disponibilidade)
+    * [Escalabilidade](#escalabilidade)
 * [Replicação de dados no CouchDB](#replicacao)
     * [Tipos de Replicação](#tipos-replicacao)
     * Quóruns 
@@ -587,7 +588,7 @@ documento como estando em conflito, como se estivessem em um sistema de
 controle de versão regular.
 
 
-## Disponibilidade
+## <a name="disponibilidade"></a> Disponibilidade
 O CouchDB foi idealizado para que houvesse uma alta disponibilidade sem 
 bloqueios para que fosse possível atendem sistemas de alto consumo de dados.
 Para ser possível atender essa necessidade de alta disponibilidade, o CouchDB
@@ -598,7 +599,7 @@ forma independente garantindo uma alta disponibilidade, com confiabilidade e
 eficiência.
 
 
-## Escalabilidade
+## <a name="escalabilidade"></a> Escalabilidade
 Como na maioria dos bancos de dados NoSQL, o CouchDB trabalha muito bem com o 
 conceito de escalabilidade horizontal. É possível escalar o banco de dados a 
 partir do aumento de máquinas disponíveis para o seu processamento, 
@@ -614,7 +615,7 @@ fazem com que o CouchDB seja considerado um banco de dados bastante escalável
 se adaptando com facilidade as mais diferentes necessidades.
 
 
-## Replicação
+## <a name="replicacao"></a> Replicação
 O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB
 comparará o banco de dados de origem e destino para determinar quais
 documentos diferem entre o banco de dados de origem e destino. Isso é feito
