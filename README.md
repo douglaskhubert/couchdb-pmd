@@ -145,9 +145,9 @@ Já quanto a propriedade BASE, definida pelo cientista [Eric Brewer](https://en.
 dos bancos NoSQL, pois prima pela disponibilidade, garantindo a consistência 
 dos dados de forma assíncrona a gravação destes mesmos dados. Vale lembrar 
 que a propriedade BASE prega
-BA – (Basically Available) – Disponibilidade é prioridade.
-S – (Soft-State) – Não precisa ser consistente o tempo todo.
-E – (Eventually Consistent) – Consistente em momento indeterminado.
+BA – (Basically Available) – Disponibilidade é prioridade
+S – (Soft-State) – Não precisa ser consistente o tempo todo
+E – (Eventually Consistent) – Consistente em momento indeterminado
 
 <p align="center">
   <img width="572" height="227" src="static/ACIDxBASE.png?raw=true">
