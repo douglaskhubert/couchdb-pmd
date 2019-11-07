@@ -85,9 +85,6 @@ outros conceitos que apresentamos nesta parte teórica do tutorial.
 
 # <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
 
-Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa propriedades
-relacionadas à banco de dados.
-
 ## <a name="cap"></a> Teorema CAP
 
 O [teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem) afirma que em um
