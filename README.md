@@ -15,6 +15,7 @@ Professora Dra. Sahudy Montenegro González
 
 * [Introdução](#introducao)
     * [Quando usar o CouchDB?](#quandousar)
+* [Terminologia](#terminologia)
 * [Implementação de Propriedades](#implementacao-propriedades)
     * [Teorema CAP](#cap)
     * [Transações e propriedades ACID/BASE](#acid)
@@ -25,7 +26,6 @@ Professora Dra. Sahudy Montenegro González
 * [Replicação de dados no CouchDB](#replicacao)
     * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
     * [Particionamento de dados (sharding)](#sharding)
-* [Terminologia](#terminologia)
 * [Instalação](#instalacao)
     * [Docker](#docker)
     * [Docker-Compose](#docker-compose)
@@ -55,6 +55,24 @@ ou lib para consumir e utilizar o banco.
 A título de curiosidade, o nome Couch é um acrônimo para “Cluster of
 Unreliable Commodity Hardware”, ou seja, cluster para máquinas de baixo poder
 computacional.
+
+
+# <a name="terminologia"></a>Terminologia
+
+Há uma certa semelhança entre os termos do **CouchDB** e o **MongoDB**, confira abaixo as terminologias:
+
+CouchDB | MongoDB | RDBMS
+--- | --- | ---
+ Database | Database | Database
+Document | Collection | Table
+" | Document | Row
+Index | Index | Index
+Value | Field | Column
+MapReduce/Views | MapReduce & Aggreagation | Join
+
+Por padrão, o CouchDB tem uma database composta de vários documentos, sendo essencialmente diferente dos casos de um RDBMS tradicional ou mesmo o MongoDB - que cada coleção organiza seus próprios documentos e há uma junção de documentos dentro de uma mesma coleçao.
+
+Além disso, o CouchDB explora muito o padrão de queries para otimização e refinamento - queries que são frequentemente utilizadas ou mesmo estão distribuídas em diversos clusters exigem a criação de uma View por padrão. Uma View pode ser composta de funções Map e Reduce em JavaScript nativo - muito semelhante ao abordado no MongoDB.
 
 
 # <a name="quandousar"></a> Quando usar o CouchDB?
@@ -269,24 +287,6 @@ o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
   <br>
   <i style="font-size: 14px">fonte: https://guide.couchdb.org/draft/views.html</i>
 </p>
-
-
-# <a name="terminologia"></a>Terminologia
-
-Há uma certa semelhança entre os termos do **CouchDB** e o **MongoDB**, confira abaixo as terminologias:
-
-CouchDB | MongoDB | RDBMS
---- | --- | ---
- Database | Database | Database
-Document | Collection | Table
-" | Document | Row
-Index | Index | Index
-Value | Field | Column
-MapReduce/Views | MapReduce & Aggreagation | Join
-
-Por padrão, o CouchDB tem uma database composta de vários documentos, sendo essencialmente diferente dos casos de um RDBMS tradicional ou mesmo o MongoDB - que cada coleção organiza seus próprios documentos e há uma junção de documentos dentro de uma mesma coleçao.
-
-Além disso, o CouchDB explora muito o padrão de queries para otimização e refinamento - queries que são frequentemente utilizadas ou mesmo estão distribuídas em diversos clusters exigem a criação de uma View por padrão. Uma View pode ser composta de funções Map e Reduce em JavaScript nativo - muito semelhante ao abordado no MongoDB.
 
 
 # <a name="instalacao"></a>Instalação
