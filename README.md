@@ -38,17 +38,9 @@ Professora Dra. Sahudy Montenegro González
     * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
     * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
 * [Particionamento de dados (sharding)](#sharding)
-* Combinando replicação e sharding no CouchDB
 * [Agregando dados](#agregacao)
-* Praticando com CouchDB
-    * Criando o nosso cluster
-        * Docker-Compose (localmente)
-        * Google Cloud Platform (ambiente núvem)
-    * ...
-    * Brincando com *queries* e verbos HTTP
-        * Inserindo registros
-        * Consultando registros
-        * Atualizando registros
+* [Praticando com cluster CouchDB](#praticando-couch)
+* [Exercícios no Cluster](#exercicios-cluster)
 
 
 # <a name="introducao"></a>Introdução
@@ -686,220 +678,42 @@ ao teorema CAP, qual propriedade do teorema o banco de dados escolhe relaxar, en
 outros conceitos que apresentamos nesta parte teórica do tutorial.
 
 
-# Praticando com CouchDB
+#<a name="praticando-couch"></a> Praticando com CouchDB
+
 
 Nesta parte do tutorial, vamos mostrar como montar um cluster de instâncias
 de CouchDB.
 
 ## Configurando os nós para nosso cluster
 
+Basicamente, a configuração da comunicação entre os nós consiste em dar um nome para cada nó, e
+a partir destes nomes, fazer com que os outros nós se conheçam.
+
+Existe uma forma de configurar o cluster via interface Fauxton, inclusive achamos um [tutorial](https://www.scaleway.com/en/docs/installation-configuration-couchdb-cluster-on-ubuntu/)
+muito bom sobre isso.
+
+Porém optamos por fazer via API. Criamos um script de configuração que pode ser
+encontrado em `cluster-couchdb/setup-cluster.sh` neste [repositório](https://github.com/douglaskhubert/couchdb-pmd)
 
 
-Vamos definir que nosso cluster terá um número **q** de shards, que é a quantidade
-de nós em que o CouchDB vai particionar nossos dados e um número n de réplicas,
-que é a quantidade de cópias que cada dado terá. Portanto, para este tutorial,
-teremos que **q = 9** e **n = 3**, o que significa que nossos dados ficarão
-particionados em 9 partes em 3 nós, respectivamente.
+## <a name="exercicios-cluster"></a> Exercícios no Cluster
 
-Primeiramente, vamos criar os arquivos de configuração para nosso cluster na
-seguinte estrutura de pasta:
-```
-.
-├── docker-compose.yaml
-├── node1
-│   └── config
-│       └── vm.args
-├── node2
-│   └── config
-│       └── vm.args
-├── node3
-│   └── config
-│       └── vm.args
-└── shared
-    ├── docker.ini
-    └── local.ini
-```
+Criamos uma lista para praticar a interação com o cluster e também fixar alguns conceitos.   
+Os exercícios devem ser resolvidos interagindo via curl.
 
-Crie o  diretório raíz chamado cluster-couchdb:
+1. Crie o banco de dados "pedidos".
+2. Crie um pedido no banco de dados "pedidos". Dica: Abuse de *schemaless*
+3. Consulte o pedido criado no exercício anterior através de outra instância/host do CouchDB.
+Foi encontrado? O que você pode afirmar sobre isso?
+4. Provoque um conflito de escrita no cluster. Dica: Tente rodar 2 comandos de atualização de forma concorrente
+5. No CouchDB, o cliente pode solicitar um quorum diferente por request. Muito útil para quando existe um dado
+em que queremos uma consistência alta. Envie um request com quorum de escrita incluindo todos os nós
+6. Envie um request com quorum de LEITURA = 2 para o pedido criado anteriormente.
+7. Insira mais 2 registros no banco de dados "pedidos".
+8. Rode o comando para verificar os shards do banco de dados "pedidos".
+9. Verifique os shards de todos os registros inseridos anteriormente.
+10. Delete o banco de dados "pedido"
 
-```
-$ mkdir cluster-couchdb
-$ cd cluster-couchdb
-```
+É isso, ficamos por aqui. Para mais informações consulte sempre a documentação do [CouchDB](http://docs.couchdb.org/en/stable/).
 
-Crie o arquivo **docker-compose.yaml**, para podemos inicializar os containers de forma
-declarativa:
-```
-version: "3.0"
-services:
-  couchdb1:
-    image: couchdb:2.3.1
-    expose:
-      - 5984
-    volumes:
-      - ./node1/config/vm.args:/opt/couchdb/etc/vm.args
-      - ./shared/local.ini:/opt/couchdb/etc/local.ini
-      - ./shared/docker.ini:/opt/couchdb/etc/local.d/docker.ini
-
-  couchdb2:
-    image: couchdb:2.3.1
-    expose:
-      - 5984
-    volumes:
-      - ./node2/config/vm.args:/opt/couchdb/etc/vm.args
-      - ./shared/local.ini:/opt/couchdb/etc/local.ini
-      - ./shared/docker.ini:/opt/couchdb/etc/local.d/docker.ini
-
-  couchdb3:
-    image: couchdb:2.3.1
-    expose:
-      - 5984
-    volumes:
-      - ./node3/config/vm.args:/opt/couchdb/etc/vm.args
-      - ./shared/local.ini:/opt/couchdb/etc/local.ini
-      - ./shared/docker.ini:/opt/couchdb/etc/local.d/docker.ini
-
-```
-
-```
-#node1/config/vm.args
-# Ensure that the Erlang VM listens on a known port
--kernel inet_dist_listen_min 9100
--kernel inet_dist_listen_max 9100
-
-# Tell kernel and SASL not to log anything
--kernel error_logger silent
--sasl sasl_error_logger false
-
-# Use kernel poll functionality if supported by emulator
-+K true
-
-# Start a pool of asynchronous IO threads
-+A 16
-
-# Comment this line out to enable the interactive Erlang shell on startup
-+Bd -noinput
-
-# Node's name in network
--name couchdb@couchdb1
-```
-
-Graças ao dns interno do docker-compose, conseguimos usar o nome do serviço
-como host na configuração "-name couchdb@***couchdb1***"
-
-Crie o mesmo arquivo **vm.args** para os diretórios `node2/config/vm.args` e
-`node3/config/vm.args` mudando apenas o nome dos *hosts* para que correspondam
-ao nome do serviço no docker-compose, no nosso caso `couchdb2` e `couchdb3`.
-
-Em caso de dúvidas referente a estrutura das pastas e/ou conteúdo dos arquivos,
-você pode consultar o [repositório](https://github.com/douglaskhubert/couchdb-pmd/tree/master/cluster-couchdb)
-deste tutorial no GitHub.
-
-Então, nossos arquivos de vm.args estão nos dizendo que os nós do cluster possuem
-os seguintes nomes:
-
-* Nó 1: couchdb1
-* Nó 2: couchdb2
-* Nó 3: couchdb3
-
-E o usuário para acessar o host via cluster nos três nós é ***couchdb***. Vamos
-utilizar essa informação daqui a pouco.
-
-Agora vá até a raiz do projeto e inicialize os serviços executando o comando:
-
-```
-$ docker-compose up
-```
-
-Será exibido o seguinte:
-```
- $ docker-compose up
-Creating network "cluster-couchdb_default" with the default driver
-Creating cluster-couchdb_couchdb3_1 ... done
-Creating cluster-couchdb_couchdb1_1 ... done
-Creating cluster-couchdb_couchdb2_1 ... done
-Attaching to cluster-couchdb_couchdb1_1, cluster-couchdb_couchdb3_1, cluster-couchdb_couchdb2_1
-```
-
-Aguarde alguns minutos para a inicialização dos 3 nós, quando tudo estiver pronto,
-começaremos a ver algumas saídas de logs.
-
-## Ingressando os nós no cluster via Fauxton
-
-Após subirmos os 3 nós do cluster, vamos pegar o ip de um deles:
-```
- $ docker ps
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                          NAMES
-cc1a8732ec12        couchdb:2.3.1       "tini -- /docker-ent…"   6 minutes ago       Up 6 minutes        4369/tcp, 5984/tcp, 9100/tcp   cluster-couchdb_couchdb1_1
-1c4261efbad7        couchdb:2.3.1       "tini -- /docker-ent…"   6 minutes ago       Up 6 minutes        4369/tcp, 5984/tcp, 9100/tcp   cluster-couchdb_couchdb3_1
-d355517b12f2        couchdb:2.3.1       "tini -- /docker-ent…"   6 minutes ago       Up 6 minutes        4369/tcp, 5984/tcp, 9100/tcp   cluster-couchdb_couchdb2_1
- $ docker inspect cluster-couchdb_couchdb1_1
- ...
-"IPAddress": "172.21.0.3",
- ...
-```
-
-Acesse o ip do container na porta 5984 via navegador web: 
-http://172.21.0.3:5984/\_utils#setup, no nosso caso.
-
-Faça login com usuário **admin** e senha **mysecretpassword**.
-
-Va para a url **/\_utils/#setup/multinode** clicando no ícone da chave inglesa e
-depois em "Configure a Cluster".
-
-<p align="center">
-  <img width="451" height="388" src="static/configure-cluster.jpeg?raw=true">
-</p>
-
-Vamos configurar o nosso nó base, preencha os campos da seguinte forma:
-
-* **Username:** admin
-* **Password:** mysecretpassword
-* **Bind address the node will listen on:** 172.21.0.3
-* **Port that the node will use:** 5984
-* **Number of nodes to be added to the cluster (including this one):** 3
-
-Agora vamos adicionar os outros 2 nós. Preencha primeiramente da seguinte forma:
-
-* **Remote host:** couchdb@couchdb2
-* **Bind address the node will listen on:** 172.21.0.2
-    * Pegue esse ip da mesma forma que pegamos anteriormente
-* **Port that the node will use:** 5984
-
-Clique em Add Node.
-
-Preencha com os dados para o nó 3:
-
-* **Remote host:** couchdb@couchdb3
-* **Bind address the node will listen on:** 172.21.0.4
-    * Pegue esse ip da mesma forma que pegamos anteriormente
-* **Port that the node will use:** 5984
-
-Clique em Add Node.
-
-Por fim, clique em "Configure Cluster".
-
-Pronto, nossos nós estão no cluster, para conferir, acesse:
-
----
-## Recomendação de estudo e organização:
-
-Esta seção é temporária e será removida após a revisão e versão final do tutorial.
-
-* IMPORTANTE: Especificar a versão do software utilizada para criar o tutorial!
-* Introdução: instalação e configuração do cluster, visão geral e comandos básicos.
-* Arquiteturas de distribuição de dados e replicação.
-* Implementação de propriedades:
-* Consistência (por exemplo: implementa conceitos relacionados ao quorum?, implementa vector clocks e version vectors?)
-    Fonte: https://docs.couchdb.org/en/stable/cluster/sharding.html#quorum
-* Transações (é ACID em qual granularidade dos dados?)
-    Fonte: https://docs.couchdb.org/en/stable/intro/overview.html#acid-properties
-* Disponibilidade
-* Escalabilidade
-* Quando usar? Exponha como empresas estão usando esse software!
-* Quando não usar?
-
-Podem ser incluídos conceitos relacionados a estas propriedades encontrados na documentação do sistema, mesmo não vistos em sala de aula.
-A proposta acima pode ser modificada e estendida.
-
-Usem o material das aulas sobre implementação de propriedades no mongoDB, neo4j, etc. como guia para elaboração do projeto.
+PS.: A resolução dos exercícios estão no arquivo /cluster-couchdb/insert-data.sh. Mas tente fazer sozinho ;)
