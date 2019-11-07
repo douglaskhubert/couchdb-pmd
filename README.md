@@ -51,7 +51,7 @@ Professora Dra. Sahudy Montenegro González
 
 
 # <a name="introducao"></a>Introdução
-O CouchDB é um banco de dados open source desenvolvido pela Apache™
+O CouchDB é um banco de dados open source desenvolvido pela Apache™ desde 2008, sendo um banco
 [orientado à documentos](https://pt.wikipedia.org/wiki/Banco_de_dados_orientado_a_documentos).
 O CouchDB utiliza nativamente **json** para armazenamento de dados, **JavaScript**
 para sua query language, incluindo features como MapReduce e view configuration.
