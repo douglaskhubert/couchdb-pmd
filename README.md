@@ -15,18 +15,6 @@ Professora Dra. Sahudy Montenegro González
 
 * [Introdução](#introducao)
     * [Quando usar o CouchDB?](#quandousar)
-* [Instalação](#instalacao)
-    * [Docker](#docker)
-    * [Docker-Compose](#docker-compose)
-* [Terminologia](#terminologia)
-* [Configuração Básica](#configuracao-basica)
-* [Comandos Básicos](#comandos-basicos)
-    * [Inserindo um registro (POST)](#comandos-basicos-insert)
-    * [Visualizando todos os registros (GET)](#comandos-basicos-getall)
-    * [Visualizando um registro em específico (GET)](#comandos-basicos-get)
-    * [Atualizando um registro (PUT)](#comandos-basicos-update)
-    * [Deletando um registro (DELETE)](#comandos-basicos-delete)
-    * [Map Reduce, Views e Mango](#map-reduce)
 * [Implementação de Propriedades](#implementacao-propriedades)
     * [Teorema CAP](#cap)
     * [Transações e propriedades ACID/BASE](#acid)
@@ -39,6 +27,18 @@ Professora Dra. Sahudy Montenegro González
     * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
     * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
     * [Particionamento de dados (sharding)](#sharding)
+* [Instalação](#instalacao)
+    * [Docker](#docker)
+    * [Docker-Compose](#docker-compose)
+* [Terminologia](#terminologia)
+* [Configuração Básica](#configuracao-basica)
+* [Comandos Básicos](#comandos-basicos)
+    * [Inserindo um registro (POST)](#comandos-basicos-insert)
+    * [Visualizando todos os registros (GET)](#comandos-basicos-getall)
+    * [Visualizando um registro em específico (GET)](#comandos-basicos-get)
+    * [Atualizando um registro (PUT)](#comandos-basicos-update)
+    * [Deletando um registro (DELETE)](#comandos-basicos-delete)
+    * [Map Reduce, Views e Mango](#map-reduce)
 * [Praticando com CouchDB](#praticando)
     * Criando o nosso cluster
         * Docker-Compose (localmente)
@@ -81,6 +81,194 @@ de todos aqui, mas alguns pontos que devem ser observados é o comportamento e a
 o banco de dados em questão implementa as propriedades ACID, qual sua posição referente
 ao teorema CAP, qual propriedade do teorema o banco de dados escolhe relaxar, entre
 outros conceitos que apresentamos nesta parte teórica do tutorial.
+
+
+# <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
+
+Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa propriedades
+relacionadas à banco de dados.
+
+## <a name="cap"></a> Teorema CAP
+
+O [teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem) afirma que em um
+sistema de armazenamento de dados distribuído não podemos prover simultâneamente
+3 das seguintes garantias: **C**onsistência, Disponibilidade (**A**vailability) e 
+tolerância a **P**articionamento.
+
+Existem sistemas que nunca podem ficar offline, portanto, não desejam sacrificar a 
+disponibilidade. Para ter alta disponibilidade mesmo com tolerância a particionamento 
+é preciso prejudicar a consistência. Aqui, a ideia é que os sistemas aceitem escritas 
+e sincronizem os dados depois.
+
+O CouchDB se encaixa em algum lugar entre Disponibilidade e Tolerância a
+particionamento, o que significa que sua **consistência** é **eventual**, ou seja,
+mais cedo ou mais tarde, o banco de dados estará consistente.
+
+<p align="center">
+  <img width="451" height="388" src="static/cap-theorem-couchdb.png?raw=true">
+  <br>
+  <i style="font-size: 14px">fonte: https://docs.couchdb.org/en/stable/intro/consistency.html#the-cap-theorem</i>
+</p>
+
+## <a name="acid"></a> Transações e propriedades ACID/BASE
+
+Tanto o layout de arquivos como o sistema de confirmação de gravação do CouchDB implementam 
+todas as [propriedades ACID](https://en.wikipedia.org/wiki/ACID) (atomicidade, consistência, 
+isolamento e durabilidade). Como são geradas sempre novas versões 
+do documento, muito similar ao modo como funcionam as ferramentas de controle de
+versão ([Git](https://git-scm.com/), por exemplo), os documentos não ficam travados e
+principalmente, com o estado consistente. Alterações nos documentos (adicionar,
+editar, deletar) são serializadas, exceto os [blobs binários](https://en.wikipedia.org/wiki/Binary_large_object)
+que são escritos concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem
+que esperar por escritas ou outras leituras. Os documentos são indexados em b-
+trees [B-tree](https://en.wikipedia.org/wiki/B-tree) pelo seu nome (DocID) e um ID de sequência. 
+Cada atualização para uma instância de banco de dados gera um novo número sequencial. 
+IDs de sequência são usados depois para encontrar as mudanças de forma incremental em uma base
+de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente
+quando os documentos são salvos ou deletados.
+
+Quando os documentos do CouchDB são atualizados, todos os dados e índices
+associados são “descarregados” (flushed) no disco e o *commit* transacional
+sempre deixa o banco em um estado completamente consistente. *Commits* ocorrem
+em dois passos:
+1. Todos os dados dos documentos e atualizações em índices associados são “
+esvaziados” (flushed) no disco de maneira síncrona.
+2. O cabeçalho do banco de dados atualizados é escrito em dois pedaços
+consecutivos e idênticos para compor os primeiros 4k do arquivo, então é “
+esvaziados” (flushed) no disco de maneira síncrona.
+
+Caso ocorra algum erro em uma destas etapas, ambas são abortadas e o estado
+anterior do documento é recuperado, o que garante as propriedades ACID dos
+dados.
+
+Já quanto a propriedade BASE, definida pelo cientista [Eric Brewer](https://en.wikipedia.org/wiki/Eric_Brewer_%28scientist%29), é fácil identificar que o CouchDB também se encaixa muito bem, como a grande maioria 
+dos bancos NoSQL, pois prima pela disponibilidade, garantindo a consistência 
+dos dados de forma assíncrona a gravação destes mesmos dados. Vale lembrar 
+que a propriedade BASE prega
+BA – (Basically Available) – Disponibilidade é prioridade.
+S – (Soft-State) – Não precisa ser consistente o tempo todo.
+E – (Eventually Consistent) – Consistente em momento indeterminado.
+
+<p align="center">
+  <img width="572" height="227" src="static/ACIDxBASE.png?raw=true">
+</p>
+
+
+### <a name="acid-consistencia"></a> Consistência
+O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
+[MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation)
+(Multiversion Concurrency Control), o que permite que diversos acessos
+sejam feitos ao mesmo dado de forma simultânea, sendo assim, teremos uma
+disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
+
+<p align="center">
+  <img width="636" height="209" src="static/recordlock.png?raw=true">
+</p>
+
+Sempre que um usuário queira realizar uma alterção nos dados, estes dados não
+serão bloqueados aos demais usuários do banco, porém será disponibilizada uma
+versão anterior dos dados, o que caracteriza a **consistência eventual** usando
+replicação incremental presente no CouchDB. O sistema de replicação do CouchDB
+vem com detecção e resolução automáticas de conflitos. Quando o CouchDB
+detecta que um documento foi alterado em dois bancos de dados, sinaliza esse
+documento como estando em conflito, como se estivessem em um sistema de
+controle de versão regular.
+
+
+### <a name="Quorum"></a> Quorum
+
+Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
+que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
+quando falamos de consenso, também estamos falando de garantir a confiabilidade
+do sistema, no nosso caso, de leituras e escritas. Uma solução bastante conhecida
+para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)).
+No nosso caso, queremos um quorum de leitura e escrita para garantir que todos
+os nós cheguem em um consenso sobre o que ler e o que escrever.  O CouchDB já
+tem uma fórmula de quorum nativa: um mais metade do número de "cópias
+relevantes". As cópias relevantes são definidas diferentemente para leitura e
+escrita.
+
+Para **leitura**, o CouchDB considera esse número de "cópias relevantes" como o número
+de nós acessíveis do dado que foi requisitado. Por exemplo, se um usuário realiza
+um *request* para visualizar um determinado pedido de um cliente, e este pedido
+está replicado em 6 nós, mas apenas 4 nós estão ativos, o quorum é formado por esses
+4 nós. O número de cópias de leitura pode ser customizado pelo parâmetro **r**
+
+
+### <a name="disponibilidade"></a> Disponibilidade
+O CouchDB foi idealizado para que houvesse uma alta disponibilidade sem 
+bloqueios afim de atender sistemas de alto consumo de dados.
+Para ser possível atender essa necessidade de alta disponibilidade, o CouchDB
+trabalha com um conceito onde de certa forma "nada é compartilhado", mas sim 
+replicado para os demais nós do cluster. Isso faz com que, mesmo que um nó 
+apresente alguma falha momentânea, os demais nós continuarão a trabalhar de
+forma independente garantindo uma alta disponibilidade, com confiabilidade e
+eficiência.
+
+
+### <a name="escalabilidade"></a> Escalabilidade
+Como na maioria dos bancos de dados NoSQL, o CouchDB trabalha muito bem com o 
+conceito de escalabilidade horizontal. É possível escalar o banco de dados a 
+partir do aumento de máquinas disponíveis para o seu processamento, 
+diferentemente dos bancos de dados relacionais que não trabalham muito bem com
+a escalabilidade horizontal em função da concorrência.
+
+Outro fator muito importante para o CouchDB permitir escalabilidade horizontal
+é o fato de não haver locks de registros além de possuir um esquema de dados
+flexível, ou até mesmo pode se dizer que não há esquema de dados, e com isso,
+não é necessário garantir a persistência dos dados em tabelas diferentes. 
+Todos estes fatores, aliados ao processo de replicação que será visto a seguir,
+fazem com que o CouchDB seja considerado um banco de dados bastante escalável
+se adaptando com facilidade as mais diferentes necessidades.
+
+
+## <a name="replicacao"></a> Replicação
+O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB
+comparará o banco de dados de origem e destino para determinar quais
+documentos diferem entre o banco de dados de origem e destino. Isso é feito
+seguindo os Feeds de alterações na origem e comparando os documentos com o
+destino. As alterações são enviadas para o destino em lotes onde eles podem
+introduzir conflitos. Os documentos que já existem no destino na mesma revisão
+não são transferidos. Como a exclusão de documentos é representada por uma
+nova revisão, um documento excluído na fonte também será excluído no
+destino.
+
+Uma tarefa de replicação será concluída assim que chegar ao final do feed de
+alterações. Se sua propriedade contínua estiver configurada como true,
+aguardará a exibição de novas alterações até que a tarefa seja cancelada. As
+tarefas de replicação também criam documentos de ponto de verificação no
+destino para garantir que uma tarefa reiniciada possa continuar de onde parou,
+por exemplo, após a falha.
+
+<p align="center">
+  <img width="416" height="264" src="static/Replication.png?raw=true">
+</p>
+
+
+## <a name="loadbalance"></a> Balanceamento de Carga (Loadbalancing)
+O CouchDB trabalha com API HTTP para receber suas requisições, então é possível usar 
+qualquer solução de mercado para fazer o balanceamento de carga do CouchDB, como por 
+exemplo o [NGInx](https://pt.wikipedia.org/wiki/Nginx).
+Outra forma de se realizar o balanceamento de carga é elegendo um nó específico para 
+as operações de escrita ( POST, PUT, DELETE, MOVE, e COPY) e alguns nós diferentes 
+para realizar as operações de leitura ( GET, HEAD e OPTIONS).
+
+<p align="center">
+  <img width="474" height="391" src="static/LoadBalance.jpg?raw=true">
+</p>
+
+
+## <a name="sharding"></a> Particionamento de dados (sharding)
+Sharding nada mais é do que um banco de dados particionado de forma horizontal. Quando é 
+feito o sharding, os dados são replicados para diferentes nós de um cluster, o que garante
+maior segurança contra a perda de nós, e consequentemente dados. 
+O CouchDB já executa o sharding de forma automatica entre os nós do cluster
+A quantidade de shards e réplicas podem ser definidas globalmente ou específicas para cada
+banco de dados e seus parâmetros de consiguração são "q" (shards) e "n" (réplicas). Os valores
+padrão são 8 shards (q=8) e 3 réplicas (n=3). Seguindo os valores definidos como padrão, haverá
+24 partes de um único banco de dados espalhado pelo cluster. Uma boa prática é que o número de
+nós de um banco de dados seja multipo da quantidade de partes do banco, ou seja, se há 24 partes, 
+o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
 
 
 # <a name="instalacao"></a>Instalação
@@ -515,193 +703,6 @@ curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984
 * **execution_stats**: Retorna as estatísticas da query (performance);
 
 Nota-se também a presença de uma operação do tipo POST pela primeira vez - muito utilizada para setup de alguns tópicos pontuais do couch, bem como os filtros mango
-
-# <a name="implementacao-propriedades"></a> Implementação de Propriedades no CouchDB
-
-Nesta parte do tutorial, vamos falar um pouco sobre como o CouchDB implementa propriedades
-relacionadas à banco de dados.
-
-## <a name="cap"></a> Teorema CAP
-
-O [teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem) afirma que em um
-sistema de armazenamento de dados distribuído não podemos prover simultâneamente
-3 das seguintes garantias: **C**onsistência, Disponibilidade (**A**vailability) e 
-tolerância a **P**articionamento.
-
-Existem sistemas que nunca podem ficar offline, portanto, não desejam sacrificar a 
-disponibilidade. Para ter alta disponibilidade mesmo com tolerância a particionamento 
-é preciso prejudicar a consistência. Aqui, a ideia é que os sistemas aceitem escritas 
-e sincronizem os dados depois.
-
-O CouchDB se encaixa em algum lugar entre Disponibilidade e Tolerância a
-particionamento, o que significa que sua **consistência** é **eventual**, ou seja,
-mais cedo ou mais tarde, o banco de dados estará consistente.
-
-<p align="center">
-  <img width="451" height="388" src="static/cap-theorem-couchdb.png?raw=true">
-  <br>
-  <i style="font-size: 14px">fonte: https://docs.couchdb.org/en/stable/intro/consistency.html#the-cap-theorem</i>
-</p>
-
-## <a name="acid"></a> Transações e propriedades ACID/BASE
-
-Tanto o layout de arquivos como o sistema de confirmação de gravação do CouchDB implementam 
-todas as [propriedades ACID](https://en.wikipedia.org/wiki/ACID) (atomicidade, consistência, 
-isolamento e durabilidade). Como são geradas sempre novas versões 
-do documento, muito similar ao modo como funcionam as ferramentas de controle de
-versão ([Git](https://git-scm.com/), por exemplo), os documentos não ficam travados e
-principalmente, com o estado consistente. Alterações nos documentos (adicionar,
-editar, deletar) são serializadas, exceto os [blobs binários](https://en.wikipedia.org/wiki/Binary_large_object)
-que são escritos concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem
-que esperar por escritas ou outras leituras. Os documentos são indexados em b-
-trees [B-tree](https://en.wikipedia.org/wiki/B-tree) pelo seu nome (DocID) e um ID de sequência. 
-Cada atualização para uma instância de banco de dados gera um novo número sequencial. 
-IDs de sequência são usados depois para encontrar as mudanças de forma incremental em uma base
-de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente
-quando os documentos são salvos ou deletados.
-
-Quando os documentos do CouchDB são atualizados, todos os dados e índices
-associados são “descarregados” (flushed) no disco e o *commit* transacional
-sempre deixa o banco em um estado completamente consistente. *Commits* ocorrem
-em dois passos:
-1. Todos os dados dos documentos e atualizações em índices associados são “
-esvaziados” (flushed) no disco de maneira síncrona.
-2. O cabeçalho do banco de dados atualizados é escrito em dois pedaços
-consecutivos e idênticos para compor os primeiros 4k do arquivo, então é “
-esvaziados” (flushed) no disco de maneira síncrona.
-
-Caso ocorra algum erro em uma destas etapas, ambas são abortadas e o estado
-anterior do documento é recuperado, o que garante as propriedades ACID dos
-dados.
-
-Já quanto a propriedade BASE, definida pelo cientista [Eric Brewer](https://en.wikipedia.org/wiki/Eric_Brewer_%28scientist%29), é fácil identificar que o CouchDB também se encaixa muito bem, como a grande maioria 
-dos bancos NoSQL, pois prima pela disponibilidade, garantindo a consistência 
-dos dados de forma assíncrona a gravação destes mesmos dados. Vale lembrar 
-que a propriedade BASE prega
-BA – (Basically Available) – Disponibilidade é prioridade.
-S – (Soft-State) – Não precisa ser consistente o tempo todo.
-E – (Eventually Consistent) – Consistente em momento indeterminado.
-
-<p align="center">
-  <img width="572" height="227" src="static/ACIDxBASE.png?raw=true">
-</p>
-
-
-### <a name="acid-consistencia"></a> Consistência
-O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
-[MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation)
-(Multiversion Concurrency Control), o que permite que diversos acessos
-sejam feitos ao mesmo dado de forma simultânea, sendo assim, teremos uma
-disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
-
-<p align="center">
-  <img width="636" height="209" src="static/recordlock.png?raw=true">
-</p>
-
-Sempre que um usuário queira realizar uma alterção nos dados, estes dados não
-serão bloqueados aos demais usuários do banco, porém será disponibilizada uma
-versão anterior dos dados, o que caracteriza a **consistência eventual** usando
-replicação incremental presente no CouchDB. O sistema de replicação do CouchDB
-vem com detecção e resolução automáticas de conflitos. Quando o CouchDB
-detecta que um documento foi alterado em dois bancos de dados, sinaliza esse
-documento como estando em conflito, como se estivessem em um sistema de
-controle de versão regular.
-
-
-### <a name="Quorum"></a> Quorum
-
-Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
-que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
-quando falamos de consenso, também estamos falando de garantir a confiabilidade
-do sistema, no nosso caso, de leituras e escritas. Uma solução bastante conhecida
-para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)).
-No nosso caso, queremos um quorum de leitura e escrita para garantir que todos
-os nós cheguem em um consenso sobre o que ler e o que escrever.  O CouchDB já
-tem uma fórmula de quorum nativa: um mais metade do número de "cópias
-relevantes". As cópias relevantes são definidas diferentemente para leitura e
-escrita.
-
-Para **leitura**, o CouchDB considera esse número de "cópias relevantes" como o número
-de nós acessíveis do dado que foi requisitado. Por exemplo, se um usuário realiza
-um *request* para visualizar um determinado pedido de um cliente, e este pedido
-está replicado em 6 nós, mas apenas 4 nós estão ativos, o quorum é formado por esses
-4 nós. O número de cópias de leitura pode ser customizado pelo parâmetro **r**
-
-
-### <a name="disponibilidade"></a> Disponibilidade
-O CouchDB foi idealizado para que houvesse uma alta disponibilidade sem 
-bloqueios para que fosse possível atendem sistemas de alto consumo de dados.
-Para ser possível atender essa necessidade de alta disponibilidade, o CouchDB
-trabalha com um conceito onde de certa forma "nada é compartilhado", mas sim 
-replicado para os demais nós do cluster. Isso faz com que, mesmo que um nó 
-apresente alguma falha momentânea, os demais nós continuarão a trabalhar de
-forma independente garantindo uma alta disponibilidade, com confiabilidade e
-eficiência.
-
-
-### <a name="escalabilidade"></a> Escalabilidade
-Como na maioria dos bancos de dados NoSQL, o CouchDB trabalha muito bem com o 
-conceito de escalabilidade horizontal. É possível escalar o banco de dados a 
-partir do aumento de máquinas disponíveis para o seu processamento, 
-diferentemente dos bancos de dados relacionais que não trabalham muito bem com
-a escalabilidade horizontal em função da concorrência.
-
-Outro fator muito importante para o CouchDB permitir escalabilidade horizontal
-é o fato de não haver locks de registros além de possuir um esquema de dados
-flexível, ou até mesmo pode se dizer que não há esquema de dados, e com isso,
-não é necessário garantir a persistência dos dados em tabelas diferentes. 
-Todos estes fatores, aliados ao processo de replicação que será visto a seguir,
-fazem com que o CouchDB seja considerado um banco de dados bastante escalável
-se adaptando com facilidade as mais diferentes necessidades.
-
-
-## <a name="replicacao"></a> Replicação
-O CouchDB trabalha com replicação no conceito Mestre-Mestre onde o CouchDB
-comparará o banco de dados de origem e destino para determinar quais
-documentos diferem entre o banco de dados de origem e destino. Isso é feito
-seguindo os Feeds de alterações na origem e comparando os documentos com o
-destino. As alterações são enviadas para o destino em lotes onde eles podem
-introduzir conflitos. Os documentos que já existem no destino na mesma revisão
-não são transferidos. Como a exclusão de documentos é representada por uma
-nova revisão, um documento excluído na fonte também será excluído no
-destino.
-
-Uma tarefa de replicação será concluída assim que chegar ao final do feed de
-alterações. Se sua propriedade contínua estiver configurada como true,
-aguardará a exibição de novas alterações até que a tarefa seja cancelada. As
-tarefas de replicação também criam documentos de ponto de verificação no
-destino para garantir que uma tarefa reiniciada possa continuar de onde parou,
-por exemplo, após a falha.
-
-<p align="center">
-  <img width="416" height="264" src="static/Replication.png?raw=true">
-</p>
-
-
-## <a name="loadbalance"></a> Balanceamento de Carga (Loadbalancing)
-O CouchDB trabalha com API HTTP para receber suas requisições, então é possível usar 
-qualquer solução de mercado para fazer o balanceamento de carga do CouchDB, como por 
-exemplo o [NGInx](https://pt.wikipedia.org/wiki/Nginx).
-Outra forma de se realizar o balanceamento de carga é elegendo um nó específico para 
-as operações de escrita ( POST, PUT, DELETE, MOVE, e COPY) e alguns nós diferentes 
-para realizar as operações de leitura ( GET, HEAD e OPTIONS).
-
-<p align="center">
-  <img width="474" height="391" src="static/LoadBalance.jpg?raw=true">
-</p>
-
-
-## <a name="sharding"></a> Particionamento de dados (sharding)
-Sharding nada mais é do que um banco de dados particionado de forma horizontal. Quando é 
-feito o sharding, os dados são replicados para diferentes nós de um cluster, o que garante
-maior segurança contra a perda de nós, e consequentemente dados. 
-O CouchDB já executa o sharding de forma automatica entre os nós do cluster
-A quantidade de shards e réplicas podem ser definidas globalmente ou específicas para cada
-banco de dados e seus parâmetros de consiguração são "q" (shards) e "n" (réplicas). Os valores
-padrão são 8 shards (q=8) e 3 réplicas (n=3). Seguindo os valores definidos como padrão, haverá
-24 partes de um único banco de dados espalhado pelo cluster. Uma boa prática é que o número de
-nós de um banco de dados seja multipo da quantidade de partes do banco, ou seja, se há 24 partes, 
-o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
 
 
 # <a name="praticando"></a> Praticando com CouchDB
