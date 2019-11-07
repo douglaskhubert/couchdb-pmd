@@ -28,11 +28,9 @@ Professora Dra. Sahudy Montenegro González
     * [Map Reduce, Views e Mango](#map-reduce)
 * [Implementação de Propriedades](#implementacao-propriedades)
     * [Teorema CAP](#cap)
-    * [Transações e propriedades ACID](#acid)
-    * [Consistência](#acid-consistencia)
-    * [Propriedades BASE](#base)
+    * [Transações e propriedades ACID/BASE](#acid)
+    * [Consistência de Dados](#acid-consistencia)
     * Durabilidade Relaxada e o CouchDB?
-* [Consistência de dados no CouchDB](#consistencia)
 * [Replicação de dados no CouchDB](#replicacao)
     * [Tipos de Replicação](#tipos-replicacao)
     * Quóruns 
@@ -529,7 +527,7 @@ mais cedo ou mais tarde, o banco de dados estará consistente.
   <i style="font-size: 14px">fonte: https://docs.couchdb.org/en/stable/intro/consistency.html#the-cap-theorem</i>
 </p>
 
-## <a name="acid"></a> Transações e propriedades ACID
+## <a name="acid"></a> Transações e propriedades ACID/BASE
 
 O CouchDB implementa todas as [propriedades ACID](https://en.wikipedia.org/wiki/ACID)
 (atomicidade, consistência, isolamento e durabilidade. Como são geradas sempre novas versões
@@ -558,6 +556,15 @@ esvaziados” (flushed) no disco de maneira síncrona.
 Caso ocorra algum erro em uma destas etapas, ambas são abortadas e o estado
 anterior do documento é recuperado, o que garante as propriedades ACID dos
 dados.
+
+Já quanto a propriedade BASE, definida pelo cientista [Eric Brewer](https://en.wikipedia.org/wiki/Eric_Brewer_%28scientist%29), é fácil identificar que o CouchDB também se encaixa muito bem, como a grande maioria 
+dos bancos NoSQL, pois prima pela disponibilidade, garantindo a consistência 
+dos dados de forma assíncrona a gravação destes mesmos dados. Vale lembrar 
+que a propriedade BASE prega
+BA – (Basically Available) – Disponibilidade é prioridade.
+S – (Soft-State) – Não precisa ser consistente o tempo todo.
+E – (Eventually Consistent) – Consistente em momento indeterminado.
+
 
 ## <a name="acid-consistencia"></a> Consistência
 O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
