@@ -151,6 +151,8 @@ disponibilidade dos dados bastante expressiva e com isso, alta escalabilidade.
 
 <p align="center">
   <img width="636" height="209" src="static/recordlock.png?raw=true">
+  <br>
+  <i style="font-size: 14px">fonte: http://guide.couchdb.org/draft/consistency.html</i>
 </p>
 
 Sempre que um usuário queira realizar uma alterção nos dados, estes dados não
@@ -230,6 +232,8 @@ por exemplo, após a falha.
 
 <p align="center">
   <img width="416" height="264" src="static/Replication.png?raw=true">
+  <br>
+  <i style="font-size: 14px">fonte: http://guide.couchdb.org/draft/consistency.html</i>
 </p>
 
 
@@ -243,6 +247,8 @@ para realizar as operações de leitura ( GET, HEAD e OPTIONS).
 
 <p align="center">
   <img width="474" height="391" src="static/LoadBalance.jpg?raw=true">
+  <br>
+  <i style="font-size: 14px">fonte: https://guide.couchdb.org/draft/replication.html</i>
 </p>
 
 
@@ -260,6 +266,8 @@ o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
 
 <p align="center">
   <img width="585" height="302" src="static/Sharding.png?raw=true">
+  <br>
+  <i style="font-size: 14px">fonte: https://guide.couchdb.org/draft/views.html</i>
 </p>
 
 
@@ -732,4 +740,9 @@ em que queremos uma consistência alta. Envie um request com quorum de escrita i
 
 É isso, ficamos por aqui. Para mais informações consulte sempre a documentação do [CouchDB](http://docs.couchdb.org/en/stable/).
 
-PS.: A resolução dos exercícios estão no arquivo /cluster-couchdb/insert-data.sh. Mas tente fazer sozinho ;)
+PS.: A resolução dos exercícios estão no arquivo `/cluster-couchdb/insert-data.sh`. Mas tente fazer sozinho ;)
+
+# Referências
+
+* [Documentação CouchDB](http://docs.couchdb.org/en/stable/)
+* [DockerHub da imagem do CoachDB](https://hub.docker.com/_/couchdb)

@@ -57,6 +57,7 @@ wait
 
 
 
+# Add nodes into cluster through HOST1
 curl -D - -X POST -H "Content-Type: application/json" $HOST1/_cluster_setup -d '{"action": "enable_cluster", "bind_address":"0.0.0.0", "username": "admin", "password":"mysecretpassword", "port": 5984, "node_count": "3", "remote_node": "couchdb2.couchnet", "remote_current_user": "admin", "remote_current_password": "mysecretpassword" }'
 wait
 curl -D - -X POST -H "Content-Type: application/json" $HOST1/_cluster_setup -d '{"action": "add_node", "host":"couchdb2.couchnet", "port": 5984, "username": "admin", "password":"mysecretpassword"}'
