@@ -37,7 +37,7 @@ Professora Dra. Sahudy Montenegro González
     * [Atualizando um registro (PUT)](#comandos-basicos-update)
     * [Deletando um registro (DELETE)](#comandos-basicos-delete)
     * [Map Reduce, Views e Mango](#map-reduce)
-* [Praticando com cluster CouchDB](#praticando-couch)
+* [Praticando com cluster CouchDB](#praticando)
 * [Exercícios no Cluster](#exercicios-cluster)
 
 
@@ -688,7 +688,7 @@ curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984
     "execution_stats": true
 }
 ```
-**indentação quebrada para facilitar a leitura*
+**indentação quebrada para facilitar a leitura**
 
 * **selector**: Filtro com as condicionais - muito semelhante ao padrão encontrado no mongo.
 * **limit**: Quantos documentos (no total) serão exibidos;
@@ -698,12 +698,7 @@ curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984
 Nota-se também a presença de uma operação do tipo POST pela primeira vez - muito utilizada para setup de alguns tópicos pontuais do couch, bem como os filtros mango
 
 
-<<<<<<< HEAD
-#<a name="praticando-couch"></a> Praticando com CouchDB
-
-=======
 # <a name="praticando"></a> Praticando com CouchDB
->>>>>>> 1c588bb2e31bae811670bea64358166bf7d593e4
 
 Nesta parte do tutorial, vamos mostrar como montar um cluster de instâncias
 de CouchDB.
@@ -716,202 +711,9 @@ a partir destes nomes, fazer com que os outros nós se conheçam.
 Existe uma forma de configurar o cluster via interface Fauxton, inclusive achamos um [tutorial](https://www.scaleway.com/en/docs/installation-configuration-couchdb-cluster-on-ubuntu/)
 muito bom sobre isso.
 
-<<<<<<< HEAD
 Porém optamos por fazer via API. Criamos um script de configuração que pode ser
 encontrado em `cluster-couchdb/setup-cluster.sh` neste [repositório](https://github.com/douglaskhubert/couchdb-pmd)
-=======
-Vamos definir que nosso cluster terá um número **q** de shards, que é a quantidade
-de nós em que o CouchDB vai particionar nossos dados e um número n de réplicas,
-que é a quantidade de cópias que cada dado terá. Portanto, para este tutorial,
-teremos que **q = 9** e **n = 3**, o que significa que nossos dados ficarão
-particionados em 9 partes em 3 nós, respectivamente.
-
-Primeiramente, vamos criar os arquivos de configuração para nosso cluster na
-seguinte estrutura de pasta:
-```
-.
-├── docker-compose.yaml
-├── node1
-│   └── config
-│       └── vm.args
-├── node2
-│   └── config
-│       └── vm.args
-├── node3
-│   └── config
-│       └── vm.args
-└── shared
-    ├── docker.ini
-    └── local.ini
-```
-
-Crie o  diretório raíz chamado cluster-couchdb:
-
-```
-$ mkdir cluster-couchdb
-$ cd cluster-couchdb
-```
-
-Crie o arquivo **docker-compose.yaml**, para podemos inicializar os containers de forma
-declarativa:
-```
-version: "3.0"
-services:
-  couchdb1:
-    image: couchdb:2.3.1
-    expose:
-      - 5984
-    volumes:
-      - ./node1/config/vm.args:/opt/couchdb/etc/vm.args
-      - ./shared/local.ini:/opt/couchdb/etc/local.ini
-      - ./shared/docker.ini:/opt/couchdb/etc/local.d/docker.ini
-
-  couchdb2:
-    image: couchdb:2.3.1
-    expose:
-      - 5984
-    volumes:
-      - ./node2/config/vm.args:/opt/couchdb/etc/vm.args
-      - ./shared/local.ini:/opt/couchdb/etc/local.ini
-      - ./shared/docker.ini:/opt/couchdb/etc/local.d/docker.ini
-
-  couchdb3:
-    image: couchdb:2.3.1
-    expose:
-      - 5984
-    volumes:
-      - ./node3/config/vm.args:/opt/couchdb/etc/vm.args
-      - ./shared/local.ini:/opt/couchdb/etc/local.ini
-      - ./shared/docker.ini:/opt/couchdb/etc/local.d/docker.ini
-
-```
-
-```
-#node1/config/vm.args
-# Ensure that the Erlang VM listens on a known port
--kernel inet_dist_listen_min 9100
--kernel inet_dist_listen_max 9100
-
-# Tell kernel and SASL not to log anything
--kernel error_logger silent
--sasl sasl_error_logger false
-
-# Use kernel poll functionality if supported by emulator
-+K true
-
-# Start a pool of asynchronous IO threads
-+A 16
-
-# Comment this line out to enable the interactive Erlang shell on startup
-+Bd -noinput
-
-# Node's name in network
--name couchdb@couchdb1
-```
-
-Graças ao dns interno do docker-compose, conseguimos usar o nome do serviço
-como host na configuração "-name couchdb@***couchdb1***"
-
-Crie o mesmo arquivo **vm.args** para os diretórios `node2/config/vm.args` e
-`node3/config/vm.args` mudando apenas o nome dos *hosts* para que correspondam
-ao nome do serviço no docker-compose, no nosso caso `couchdb2` e `couchdb3`.
-
-Em caso de dúvidas referente a estrutura das pastas e/ou conteúdo dos arquivos,
-você pode consultar o [repositório](https://github.com/douglaskhubert/couchdb-pmd/tree/master/cluster-couchdb)
-deste tutorial no GitHub.
-
-Então, nossos arquivos de vm.args estão nos dizendo que os nós do cluster possuem
-os seguintes nomes:
-
-* Nó 1: couchdb1
-* Nó 2: couchdb2
-* Nó 3: couchdb3
-
-E o usuário para acessar o host via cluster nos três nós é ***couchdb***. Vamos
-utilizar essa informação daqui a pouco.
-
-Agora vá até a raiz do projeto e inicialize os serviços executando o comando:
-
-```
-$ docker-compose up
-```
-
-Será exibido o seguinte:
-```
- $ docker-compose up
-Creating network "cluster-couchdb_default" with the default driver
-Creating cluster-couchdb_couchdb3_1 ... done
-Creating cluster-couchdb_couchdb1_1 ... done
-Creating cluster-couchdb_couchdb2_1 ... done
-Attaching to cluster-couchdb_couchdb1_1, cluster-couchdb_couchdb3_1, cluster-couchdb_couchdb2_1
-```
-
-Aguarde alguns minutos para a inicialização dos 3 nós, quando tudo estiver pronto,
-começaremos a ver algumas saídas de logs.
-
-### Ingressando os nós no cluster via Fauxton
-
-Após subirmos os 3 nós do cluster, vamos pegar o ip de um deles:
-```
- $ docker ps
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                          NAMES
-cc1a8732ec12        couchdb:2.3.1       "tini -- /docker-ent…"   6 minutes ago       Up 6 minutes        4369/tcp, 5984/tcp, 9100/tcp   cluster-couchdb_couchdb1_1
-1c4261efbad7        couchdb:2.3.1       "tini -- /docker-ent…"   6 minutes ago       Up 6 minutes        4369/tcp, 5984/tcp, 9100/tcp   cluster-couchdb_couchdb3_1
-d355517b12f2        couchdb:2.3.1       "tini -- /docker-ent…"   6 minutes ago       Up 6 minutes        4369/tcp, 5984/tcp, 9100/tcp   cluster-couchdb_couchdb2_1
- $ docker inspect cluster-couchdb_couchdb1_1
- ...
-"IPAddress": "172.21.0.3",
- ...
-```
-
-Acesse o ip do container na porta 5984 via navegador web: 
-http://172.21.0.3:5984/\_utils#setup, no nosso caso.
-
-Faça login com usuário **admin** e senha **mysecretpassword**.
-
-Va para a url **/\_utils/#setup/multinode** clicando no ícone da chave inglesa e
-depois em "Configure a Cluster".
-
-<p align="center">
-  <img width="451" height="388" src="static/configure-cluster.jpeg?raw=true">
-</p>
-
-Vamos configurar o nosso nó base, preencha os campos da seguinte forma:
-
-* **Username:** admin
-* **Password:** mysecretpassword
-* **Bind address the node will listen on:** 172.21.0.3
-* **Port that the node will use:** 5984
-* **Number of nodes to be added to the cluster (including this one):** 3
-
-Agora vamos adicionar os outros 2 nós. Preencha primeiramente da seguinte forma:
-
-* **Remote host:** couchdb@couchdb2
-* **Bind address the node will listen on:** 172.21.0.2
-    * Pegue esse ip da mesma forma que pegamos anteriormente
-* **Port that the node will use:** 5984
-
-Clique em Add Node.
-
-Preencha com os dados para o nó 3:
-
-* **Remote host:** couchdb@couchdb3
-* **Bind address the node will listen on:** 172.21.0.4
-    * Pegue esse ip da mesma forma que pegamos anteriormente
-* **Port that the node will use:** 5984
-
-Clique em Add Node.
-
-Por fim, clique em "Configure Cluster".
->>>>>>> 1c588bb2e31bae811670bea64358166bf7d593e4
-
-
-<<<<<<< HEAD
 ## <a name="exercicios-cluster"></a> Exercícios no Cluster
-=======
----
-### Recomendação de estudo e organização:
->>>>>>> 1c588bb2e31bae811670bea64358166bf7d593e4
 
 Criamos uma lista para praticar a interação com o cluster e também fixar alguns conceitos.   
 Os exercícios devem ser resolvidos interagindo via curl.
