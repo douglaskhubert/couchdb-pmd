@@ -38,7 +38,7 @@ Professora Dra. Sahudy Montenegro González
         * Leitura e Escrita
         * Eleição de um novo Coordenador
     * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
-    * Balanceamento de Carga (Loadbalancing)
+    * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
 * [Particionamento de dados (sharding)](#sharding)
 * Combinando replicação e sharding no CouchDB
 * [Agregando dados](#agregacao)
@@ -636,6 +636,20 @@ por exemplo, após a falha.
 <p align="center">
   <img width="416" height="264" src="static/Replication.png?raw=true">
 </p>
+
+
+## <a name="loadbalance"></a> Balanceamento de Carga (Loadbalancing)
+O CouchDB trabalha com API HTTP para receber suas requisições, então é possível usar 
+qualquer solução de mercado para fazer o balanceamento de carga do CouchDB, como por 
+exemplo o [NGInx](https://pt.wikipedia.org/wiki/Nginx).
+Outra forma de se realizar o balanceamento de carga é elegendo um nó específico para 
+as operações de escrita ( POST, PUT, DELETE, MOVE, e COPY) e alguns nós diferentes 
+para realizar as operações de leitura ( GET, HEAD e OPTIONS).
+
+<p align="center">
+  <img width="474" height="391" src="static/LoadBalance.jpg?raw=true">
+</p>
+
 
 # Quando usar o CouchDB?
 
