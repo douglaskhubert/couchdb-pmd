@@ -545,8 +545,8 @@ mais cedo ou mais tarde, o banco de dados estará consistente.
 
 ## <a name="acid"></a> Transações e propriedades ACID/BASE
 
-O CouchDB implementa todas as [propriedades ACID](https://en.wikipedia.org/wiki/ACID)
-(atomicidade, consistência, isolamento e durabilidade. Como são geradas sempre novas versões
+O layout do arquivo e o sistema de confirmação do CouchDB implementa todas as [propriedades ACID](https://en.wikipedia.org/wiki/ACID)
+(atomicidade, consistência, isolamento e durabilidade). Como são geradas sempre novas versões
 do documento, muito similar ao modo como funcionam as ferramentas de controle de
 versão ([Git](https://git-scm.com/), por exemplo), os documentos não ficam travados e
 principalmente, com o estado consistente. Alterações nos documentos (adicionar,
