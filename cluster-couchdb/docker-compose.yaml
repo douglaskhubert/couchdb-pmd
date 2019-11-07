@@ -1,6 +1,49 @@
-version: "3.0"
+version: "3.5"
 services:
-  couchdb:
+  couchdb1:
     image: couchdb:2.3.1
-    ports:
-      - 5984:5984
+    expose:
+      - 5984
+    environment:
+      - ERL_FLAGS=-setcookie "brumbrum"
+      - NODENAME=couchdb1.couchnet
+      - COUCHDB_USER=admin 
+      - COUCHDB_PASSWORD=mysecretpassword
+
+    networks:
+      default:
+        aliases:
+          - couchdb1.couchnet
+
+  couchdb2:
+    image: couchdb:2.3.1
+    expose:
+      - 5984
+    environment:
+      - ERL_FLAGS=-setcookie "brumbrum"
+      - NODENAME=couchdb2.couchnet
+      - COUCHDB_USER=admin 
+      - COUCHDB_PASSWORD=mysecretpassword
+    networks:
+      default:
+        aliases:
+          - couchdb2.couchnet
+
+  couchdb3:
+    image: couchdb:2.3.1
+    expose:
+      - 5984
+    environment:
+      - ERL_FLAGS=-setcookie "brumbrum"
+      - NODENAME=couchdb3.couchnet
+      - COUCHDB_USER=admin 
+      - COUCHDB_PASSWORD=mysecretpassword
+    networks:
+      default:
+        aliases:
+          - couchdb3.couchnet
+
+networks:
+  default:
+    external:
+      name: couchnet
