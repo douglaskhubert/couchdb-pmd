@@ -578,6 +578,18 @@ controle de versão regular.
 ## Disponibilidade
 
 ## Escalabilidade
+Como na maioria dos bancos de dados NoSQL, o CouchDB trabalha muito bem com o 
+conceito de escalabilidade horizontal. É possível escalar o banco de dados a 
+partir do aumento de máquinas disponíveis para o seu processamento, 
+diferentemente dos bancos de dados relacionais que não trabalham muito bem com
+a escalabilidade horizontal em função da concorrência.
+Outro fator muito importante para o CouchDB permitir escalabilidade horizontal
+é o fato de não haver locks de registros além de possuir um esquema de dados
+flexível, ou até mesmo pode se dizer que não há esquema de dados, e com isso,
+não é necessário garantir a persistência dos dados em tabelas diferentes. 
+Todos estes fatores, aliados ao processo de replicação que será visto a seguir,
+fazem com que o CouchDB seja considerado um banco de dados bastante escalável
+se adaptando com facilidade as mais diferentes necessidades.
 
 
 ## Replicação
