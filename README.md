@@ -23,8 +23,6 @@ Professora Dra. Sahudy Montenegro González
     * [Disponibilidade](#disponibilidade)
     * [Escalabilidade](#escalabilidade)
 * [Replicação de dados no CouchDB](#replicacao)
-    * [Tipos de Replicação](#tipos-replicacao)
-    * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
     * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
     * [Particionamento de dados (sharding)](#sharding)
 * [Terminologia](#terminologia)
