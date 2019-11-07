@@ -30,13 +30,11 @@ Professora Dra. Sahudy Montenegro González
     * [Teorema CAP](#cap)
     * [Transações e propriedades ACID/BASE](#acid)
     * [Consistência de Dados](#acid-consistencia)
+    * [Quorum](#Quorum)
     * [Disponibilidade](#disponibilidade)
     * [Escalabilidade](#escalabilidade)
 * [Replicação de dados no CouchDB](#replicacao)
     * [Tipos de Replicação](#tipos-replicacao)
-    * Quóruns 
-        * Leitura e Escrita
-        * Eleição de um novo Coordenador
     * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
     * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
 * [Particionamento de dados (sharding)](#sharding)
@@ -588,6 +586,26 @@ documento como estando em conflito, como se estivessem em um sistema de
 controle de versão regular.
 
 
+# <a name="Quorum"></a> Quorum
+
+Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
+que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
+quando falamos de consenso, também estamos falando de garantir a confiabilidade
+do sistema, no nosso caso, de leituras e escritas. Uma solução bastante conhecida
+para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)).
+No nosso caso, queremos um quorum de leitura e escrita para garantir que todos
+os nós cheguem em um consenso sobre o que ler e o que escrever.  O CouchDB já
+tem uma fórmula de quorum nativa: um mais metade do número de "cópias
+relevantes". As cópias relevantes são definidas diferentemente para leitura e
+escrita.
+
+Para **leitura**, o CouchDB considera esse número de "cópias relevantes" como o número
+de nós acessíveis do dado que foi requisitado. Por exemplo, se um usuário realiza
+um *request* para visualizar um determinado pedido de um cliente, e este pedido
+está replicado em 6 nós, mas apenas 4 nós estão ativos, o quorum é formado por esses
+4 nós. O número de cópias de leitura pode ser customizado pelo parâmetro **r**
+
+
 ## <a name="disponibilidade"></a> Disponibilidade
 O CouchDB foi idealizado para que houvesse uma alta disponibilidade sem 
 bloqueios para que fosse possível atendem sistemas de alto consumo de dados.
@@ -667,25 +685,6 @@ o banco de dados em questão implementa as propriedades ACID, qual sua posição
 ao teorema CAP, qual propriedade do teorema o banco de dados escolhe relaxar, entre
 outros conceitos que apresentamos nesta parte teórica do tutorial.
 
-
-# Quorum
-
-Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
-que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
-quando falamos de consenso, também estamos falando de garantir a confiabilidade
-do sistema, no nosso caso, de leituras e escritas. Uma solução bastante conhecida
-para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)).
-No nosso caso, queremos um quorum de leitura e escrita para garantir que todos
-os nós cheguem em um consenso sobre o que ler e o que escrever.  O CouchDB já
-tem uma fórmula de quorum nativa: um mais metade do número de "cópias
-relevantes". As cópias relevantes são definidas diferentemente para leitura e
-escrita.
-
-Para **leitura**, o CouchDB considera esse número de "cópias relevantes" como o número
-de nós acessíveis do dado que foi requisitado. Por exemplo, se um usuário realiza
-um *request* para visualizar um determinado pedido de um cliente, e este pedido
-está replicado em 6 nós, mas apenas 4 nós estão ativos, o quorum é formado por esses
-4 nós. O número de cópias de leitura pode ser customizado pelo parâmetro **r**
 
 # Praticando com CouchDB
 
