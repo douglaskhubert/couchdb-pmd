@@ -581,6 +581,10 @@ BA – (Basically Available) – Disponibilidade é prioridade.
 S – (Soft-State) – Não precisa ser consistente o tempo todo.
 E – (Eventually Consistent) – Consistente em momento indeterminado.
 
+<p align="center">
+  <img width="572" height="227" src="static/ACIDxBASE.png?raw=true">
+</p>
+
 
 ### <a name="acid-consistencia"></a> Consistência
 O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
