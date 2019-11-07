@@ -512,7 +512,12 @@ relacionadas à banco de dados.
 O [teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem) afirma que em um
 sistema de armazenamento de dados distribuído não podemos prover simultâneamente
 3 das seguintes garantias: **C**onsistência, Disponibilidade (**A**vailability) e 
-tolerância a **P**articionamento
+tolerância a **P**articionamento.
+
+Existem sistemas que nunca podem ficar offline, portanto, não desejam sacrificar a 
+disponibilidade. Para ter alta disponibilidade mesmo com tolerância a particionamento 
+é preciso prejudicar a consistência. Aqui, a ideia é que os sistemas aceitem escritas 
+e sincronizem os dados depois.
 
 O CouchDB se encaixa em algum lugar entre Disponibilidade e Tolerância a
 particionamento, o que significa que sua **consistência** é **eventual**, ou seja,
@@ -534,9 +539,9 @@ principalmente, com o estado consistente. Alterações nos documentos (adicionar
 editar, deletar) são serializadas, exceto os [blobs binários](https://en.wikipedia.org/wiki/Binary_large_object)
 que são escritos concorrentemente. Leituras no banco nunca são bloqueadas (lock) e nunca tem
 que esperar por escritas ou outras leituras. Os documentos são indexados em b-
-trees pelo seu nome (DocID) e um ID de sequência. Cada atualização para uma
-instância de banco de dados gera um novo número sequencial. IDs de sequência
-são usados depois para encontrar as mudanças de forma incremental em uma base
+trees [B-tree](https://en.wikipedia.org/wiki/B-tree) pelo seu nome (DocID) e um ID de sequência. 
+Cada atualização para uma instância de banco de dados gera um novo número sequencial. 
+IDs de sequência são usados depois para encontrar as mudanças de forma incremental em uma base
 de dados. Esses índices b-trees (árvores B) são atualizados simultaneamente
 quando os documentos são salvos ou deletados.
 
@@ -576,6 +581,15 @@ controle de versão regular.
 
 
 ## Disponibilidade
+O CouchDB foi idealizado para que houvesse uma alta disponibilidade sem 
+bloqueios para que fosse possível atendem sistemas de alto consumo de dados.
+Para ser possível atender essa necessidade de alta disponibilidade, o CouchDB
+trabalha com um conceito onde de certa forma "nada é compartilhado", mas sim 
+replicado para os demais nós do cluster. Isso faz com que, mesmo que um nó 
+apresente alguma falha momentânea, os demais nós continuarão a trabalhar de
+forma independente garantindo uma alta disponibilidade, com confiabilidade e
+eficiência.
+
 
 ## Escalabilidade
 Como na maioria dos bancos de dados NoSQL, o CouchDB trabalha muito bem com o 
@@ -583,6 +597,7 @@ conceito de escalabilidade horizontal. É possível escalar o banco de dados a
 partir do aumento de máquinas disponíveis para o seu processamento, 
 diferentemente dos bancos de dados relacionais que não trabalham muito bem com
 a escalabilidade horizontal em função da concorrência.
+
 Outro fator muito importante para o CouchDB permitir escalabilidade horizontal
 é o fato de não haver locks de registros além de possuir um esquema de dados
 flexível, ou até mesmo pode se dizer que não há esquema de dados, e com isso,
