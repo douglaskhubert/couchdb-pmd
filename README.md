@@ -14,6 +14,7 @@ Professora Dra. Sahudy Montenegro González
 ## Tabela de conteúdo
 
 * [Introdução](#introducao)
+    * [Quando usar o CouchDB?](#quandousar)
 * [Instalação](#instalacao)
     * [Docker](#docker)
     * [Docker-Compose](#docker-compose)
@@ -37,10 +38,8 @@ Professora Dra. Sahudy Montenegro González
     * [Tipos de Replicação](#tipos-replicacao)
     * [MapReduce em CouchDB? Faz sentido?](#mapreduce)
     * [Balanceamento de Carga (Loadbalancing)](#loadbalance)
-* [Particionamento de dados (sharding)](#sharding)
-* Combinando replicação e sharding no CouchDB
-* [Agregando dados](#agregacao)
-* Praticando com CouchDB
+    * [Particionamento de dados (sharding)](#sharding)
+* [Praticando com CouchDB](#praticando)
     * Criando o nosso cluster
         * Docker-Compose (localmente)
         * Google Cloud Platform (ambiente núvem)
@@ -65,6 +64,24 @@ ou lib para consumir e utilizar o banco.
 A título de curiosidade, o nome Couch é um acrônimo para “Cluster of
 Unreliable Commodity Hardware”, ou seja, cluster para máquinas de baixo poder
 computacional.
+
+
+# <a name="quandousar"></a> Quando usar o CouchDB?
+
+Se as pessoas envolvidas em seu projeto já possuem um conhecimento sólido em
+tecnologias web, como consumo de API's REST, a curva de aprendizagem para o CouchDB
+deverá ser bem tranquila.
+
+Devido ao fato de o CouchDB ser um banco de dados orientado à documentos, também
+pode ser indicado para casos de uso onde existe a necessidade de dados *schemaless*,
+em outras palavras, quando os dados podem ter diferentes estruturas e tipos.
+
+Existem vários fatores para a escolha de um banco de dados para um projeto, não falaremos
+de todos aqui, mas alguns pontos que devem ser observados é o comportamento e a forma que
+o banco de dados em questão implementa as propriedades ACID, qual sua posição referente
+ao teorema CAP, qual propriedade do teorema o banco de dados escolhe relaxar, entre
+outros conceitos que apresentamos nesta parte teórica do tutorial.
+
 
 # <a name="instalacao"></a>Instalação
 
@@ -682,24 +699,7 @@ nós de um banco de dados seja multipo da quantidade de partes do banco, ou seja
 o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
 
 
-# Quando usar o CouchDB?
-
-Se as pessoas envolvidas em seu projeto já possuem um conhecimento sólido em
-tecnologias web, como consumo de API's REST, a curva de aprendizagem para o CouchDB
-deverá ser bem tranquila.
-
-Devido ao fato de o CouchDB ser um banco de dados orientado à documentos, também
-pode ser indicado para casos de uso onde existe a necessidade de dados *schemaless*,
-em outras palavras, quando os dados podem ter diferentes estruturas e tipos.
-
-Existem vários fatores para a escolha de um banco de dados para um projeto, não falaremos
-de todos aqui, mas alguns pontos que devem ser observados é o comportamento e a forma que
-o banco de dados em questão implementa as propriedades ACID, qual sua posição referente
-ao teorema CAP, qual propriedade do teorema o banco de dados escolhe relaxar, entre
-outros conceitos que apresentamos nesta parte teórica do tutorial.
-
-
-# Praticando com CouchDB
+## <a name="praticando"></a> Praticando com CouchDB
 
 Nesta parte do tutorial, vamos mostrar como montar um cluster de instâncias
 de CouchDB.
