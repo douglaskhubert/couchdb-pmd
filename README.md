@@ -175,7 +175,7 @@ Para validar se a instância está rodando localmente e operante, basta executar
 $ curl http://127.0.0.1:5984/
 ```
 
-## <a name="terminologia"></a>Terminologia
+# <a name="terminologia"></a>Terminologia
 
 Há uma certa semelhança entre os termos do **CouchDB** e o **MongoDB**, confira abaixo as terminologias:
 
@@ -193,7 +193,7 @@ Por padrão, o CouchDB tem uma database composta de vários documentos, sendo es
 Além disso, o CouchDB explora muito o padrão de queries para otimização e refinamento - queries que são frequentemente utilizadas ou mesmo estão distribuídas em diversos clusters exigem a criação de uma View por padrão. Uma View pode ser composta de funções Map e Reduce em JavaScript nativo - muito semelhante ao abordado no MongoDB.
 
 
-## <a name="configuracao-basica"></a>Configuração Básica
+# <a name="configuracao-basica"></a>Configuração Básica
 
 É possível configurar e utilizar o CouchDB através de duas maneiras:
 * **API** - Nativa;
@@ -582,7 +582,7 @@ S – (Soft-State) – Não precisa ser consistente o tempo todo.
 E – (Eventually Consistent) – Consistente em momento indeterminado.
 
 
-## <a name="acid-consistencia"></a> Consistência
+### <a name="acid-consistencia"></a> Consistência
 O CouchDB faz uso de Controle de Concorrência de Múltiplas Versões ou somente
 [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation)
 (Multiversion Concurrency Control), o que permite que diversos acessos
@@ -603,7 +603,7 @@ documento como estando em conflito, como se estivessem em um sistema de
 controle de versão regular.
 
 
-# <a name="Quorum"></a> Quorum
+### <a name="Quorum"></a> Quorum
 
 Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
 que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
@@ -623,7 +623,7 @@ está replicado em 6 nós, mas apenas 4 nós estão ativos, o quorum é formado 
 4 nós. O número de cópias de leitura pode ser customizado pelo parâmetro **r**
 
 
-## <a name="disponibilidade"></a> Disponibilidade
+### <a name="disponibilidade"></a> Disponibilidade
 O CouchDB foi idealizado para que houvesse uma alta disponibilidade sem 
 bloqueios para que fosse possível atendem sistemas de alto consumo de dados.
 Para ser possível atender essa necessidade de alta disponibilidade, o CouchDB
@@ -634,7 +634,7 @@ forma independente garantindo uma alta disponibilidade, com confiabilidade e
 eficiência.
 
 
-## <a name="escalabilidade"></a> Escalabilidade
+### <a name="escalabilidade"></a> Escalabilidade
 Como na maioria dos bancos de dados NoSQL, o CouchDB trabalha muito bem com o 
 conceito de escalabilidade horizontal. É possível escalar o banco de dados a 
 partir do aumento de máquinas disponíveis para o seu processamento, 
@@ -699,12 +699,12 @@ nós de um banco de dados seja multipo da quantidade de partes do banco, ou seja
 o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
 
 
-## <a name="praticando"></a> Praticando com CouchDB
+# <a name="praticando"></a> Praticando com CouchDB
 
 Nesta parte do tutorial, vamos mostrar como montar um cluster de instâncias
 de CouchDB.
 
-## Configurando os nós para nosso cluster
+### Configurando os nós para nosso cluster
 
 
 
@@ -837,7 +837,7 @@ Attaching to cluster-couchdb_couchdb1_1, cluster-couchdb_couchdb3_1, cluster-cou
 Aguarde alguns minutos para a inicialização dos 3 nós, quando tudo estiver pronto,
 começaremos a ver algumas saídas de logs.
 
-## Ingressando os nós no cluster via Fauxton
+### Ingressando os nós no cluster via Fauxton
 
 Após subirmos os 3 nós do cluster, vamos pegar o ip de um deles:
 ```
@@ -895,7 +895,7 @@ Por fim, clique em "Configure Cluster".
 Pronto, nossos nós estão no cluster, para conferir, acesse:
 
 ---
-## Recomendação de estudo e organização:
+### Recomendação de estudo e organização:
 
 Esta seção é temporária e será removida após a revisão e versão final do tutorial.
 
