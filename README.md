@@ -270,6 +270,10 @@ padrão são 8 shards (q=8) e 3 réplicas (n=3). Seguindo os valores definidos c
 nós de um banco de dados seja multipo da quantidade de partes do banco, ou seja, se há 24 partes, 
 o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
 
+<p align="center">
+  <img width="585" height="302" src="static/Sharding.png?raw=true">
+</p>
+
 
 # <a name="terminologia"></a>Terminologia
 
