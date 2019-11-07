@@ -669,6 +669,19 @@ para realizar as operações de leitura ( GET, HEAD e OPTIONS).
 </p>
 
 
+## <a name="sharding"></a> Particionamento de dados (sharding)
+Sharding nada mais é do que um banco de dados particionado de forma horizontal. Quando é 
+feito o sharding, os dados são replicados para diferentes nós de um cluster, o que garante
+maior segurança contra a perda de nós, e consequentemente dados. 
+O CouchDB já executa o sharding de forma automatica entre os nós do cluster
+A quantidade de shards e réplicas podem ser definidas globalmente ou específicas para cada
+banco de dados e seus parâmetros de consiguração são "q" (shards) e "n" (réplicas). Os valores
+padrão são 8 shards (q=8) e 3 réplicas (n=3). Seguindo os valores definidos como padrão, haverá
+24 partes de um único banco de dados espalhado pelo cluster. Uma boa prática é que o número de
+nós de um banco de dados seja multipo da quantidade de partes do banco, ou seja, se há 24 partes, 
+o correto seria haver 2 ou 3 ou 4 ou 6 ou 8 nós configurados.
+
+
 # Quando usar o CouchDB?
 
 Se as pessoas envolvidas em seu projeto já possuem um conhecimento sólido em
