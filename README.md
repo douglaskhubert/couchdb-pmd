@@ -39,15 +39,8 @@ Professora Dra. Sahudy Montenegro González
     * [Atualizando um registro (PUT)](#comandos-basicos-update)
     * [Deletando um registro (DELETE)](#comandos-basicos-delete)
     * [Map Reduce, Views e Mango](#map-reduce)
-* [Praticando com CouchDB](#praticando)
-    * Criando o nosso cluster
-        * Docker-Compose (localmente)
-        * Google Cloud Platform (ambiente núvem)
-    * ...
-    * Brincando com *queries* e verbos HTTP
-        * Inserindo registros
-        * Consultando registros
-        * Atualizando registros
+* [Praticando com cluster CouchDB](#praticando-couch)
+* [Exercícios no Cluster](#exercicios-cluster)
 
 
 # <a name="introducao"></a>Introdução
@@ -707,15 +700,28 @@ curl -H 'Content-Type: application/json' -X PUT http://admin:1234@127.0.0.1:5984
 Nota-se também a presença de uma operação do tipo POST pela primeira vez - muito utilizada para setup de alguns tópicos pontuais do couch, bem como os filtros mango
 
 
+<<<<<<< HEAD
+#<a name="praticando-couch"></a> Praticando com CouchDB
+
+=======
 # <a name="praticando"></a> Praticando com CouchDB
+>>>>>>> 1c588bb2e31bae811670bea64358166bf7d593e4
 
 Nesta parte do tutorial, vamos mostrar como montar um cluster de instâncias
 de CouchDB.
 
 ### Configurando os nós para nosso cluster
 
+Basicamente, a configuração da comunicação entre os nós consiste em dar um nome para cada nó, e
+a partir destes nomes, fazer com que os outros nós se conheçam.
 
+Existe uma forma de configurar o cluster via interface Fauxton, inclusive achamos um [tutorial](https://www.scaleway.com/en/docs/installation-configuration-couchdb-cluster-on-ubuntu/)
+muito bom sobre isso.
 
+<<<<<<< HEAD
+Porém optamos por fazer via API. Criamos um script de configuração que pode ser
+encontrado em `cluster-couchdb/setup-cluster.sh` neste [repositório](https://github.com/douglaskhubert/couchdb-pmd)
+=======
 Vamos definir que nosso cluster terá um número **q** de shards, que é a quantidade
 de nós em que o CouchDB vai particionar nossos dados e um número n de réplicas,
 que é a quantidade de cópias que cada dado terá. Portanto, para este tutorial,
@@ -899,28 +905,32 @@ Preencha com os dados para o nó 3:
 Clique em Add Node.
 
 Por fim, clique em "Configure Cluster".
+>>>>>>> 1c588bb2e31bae811670bea64358166bf7d593e4
 
-Pronto, nossos nós estão no cluster, para conferir, acesse:
 
+<<<<<<< HEAD
+## <a name="exercicios-cluster"></a> Exercícios no Cluster
+=======
 ---
 ### Recomendação de estudo e organização:
+>>>>>>> 1c588bb2e31bae811670bea64358166bf7d593e4
 
-Esta seção é temporária e será removida após a revisão e versão final do tutorial.
+Criamos uma lista para praticar a interação com o cluster e também fixar alguns conceitos.   
+Os exercícios devem ser resolvidos interagindo via curl.
 
-* IMPORTANTE: Especificar a versão do software utilizada para criar o tutorial!
-* Introdução: instalação e configuração do cluster, visão geral e comandos básicos.
-* Arquiteturas de distribuição de dados e replicação.
-* Implementação de propriedades:
-* Consistência (por exemplo: implementa conceitos relacionados ao quorum?, implementa vector clocks e version vectors?)
-    Fonte: https://docs.couchdb.org/en/stable/cluster/sharding.html#quorum
-* Transações (é ACID em qual granularidade dos dados?)
-    Fonte: https://docs.couchdb.org/en/stable/intro/overview.html#acid-properties
-* Disponibilidade
-* Escalabilidade
-* Quando usar? Exponha como empresas estão usando esse software!
-* Quando não usar?
+1. Crie o banco de dados "pedidos".
+2. Crie um pedido no banco de dados "pedidos". Dica: Abuse de *schemaless*
+3. Consulte o pedido criado no exercício anterior através de outra instância/host do CouchDB.
+Foi encontrado? O que você pode afirmar sobre isso?
+4. Provoque um conflito de escrita no cluster. Dica: Tente rodar 2 comandos de atualização de forma concorrente
+5. No CouchDB, o cliente pode solicitar um quorum diferente por request. Muito útil para quando existe um dado
+em que queremos uma consistência alta. Envie um request com quorum de escrita incluindo todos os nós
+6. Envie um request com quorum de LEITURA = 2 para o pedido criado anteriormente.
+7. Insira mais 2 registros no banco de dados "pedidos".
+8. Rode o comando para verificar os shards do banco de dados "pedidos".
+9. Verifique os shards de todos os registros inseridos anteriormente.
+10. Delete o banco de dados "pedido"
 
-Podem ser incluídos conceitos relacionados a estas propriedades encontrados na documentação do sistema, mesmo não vistos em sala de aula.
-A proposta acima pode ser modificada e estendida.
+É isso, ficamos por aqui. Para mais informações consulte sempre a documentação do [CouchDB](http://docs.couchdb.org/en/stable/).
 
-Usem o material das aulas sobre implementação de propriedades no mongoDB, neo4j, etc. como guia para elaboração do projeto.
+PS.: A resolução dos exercícios estão no arquivo /cluster-couchdb/insert-data.sh. Mas tente fazer sozinho ;)
