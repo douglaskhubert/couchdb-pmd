@@ -204,11 +204,11 @@ de nós acessíveis do dado que foi requisitado. Por exemplo, se um usuário rea
 um *request* para visualizar um determinado pedido de um cliente, e este pedido
 está replicado em 6 nós, mas apenas 4 nós estão ativos, o quorum é formado por esses
 4 nós. O número de cópias de leitura pode ser customizado pelo parâmetro **r**. Para 
-alterar a configuração de leitura, basta executar o commando ?r=2.
+alterar a configuração de leitura, como por exemplo, basta executar o comando ?r=2.
 
 Para **escrita**, o número de cópias relevantes é sempre no número de réplicas no cluster
-e pode ser customizado pelo parâmetro **w**. Para alterar a configuração de escrita, 
-basta executar o commando ?w=2.
+e pode ser customizado pelo parâmetro **w**. Para alterar a configuração de escrita, como 
+por exemplo, basta executar o commando ?w=2.
 
 
 ### <a name="disponibilidade"></a> Disponibilidade
