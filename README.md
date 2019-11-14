@@ -749,7 +749,7 @@ PS.: A resolução dos exercícios estão no arquivo `/cluster-couchdb/insert-da
 * [Documentação CouchDB](http://docs.couchdb.org/en/stable/)
 * [DockerHub da imagem do CouchDB](https://hub.docker.com/_/couchdb)
 * [DB orientado a documentos](https://en.wikipedia.org/wiki/Document-oriented_database)
-* [**RESTful API's**](https://en.wikipedia.org/wiki/Representational_state_transfer)
+* [REST](https://en.wikipedia.org/wiki/Representational_state_transfer)
 * [Teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem)
 * [Propriedades ACID](https://en.wikipedia.org/wiki/ACID)
 * [Git](https://git-scm.com/)
