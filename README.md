@@ -208,7 +208,7 @@ alterar a configuração de leitura, como por exemplo, basta executar o comando 
 
 Para **escrita**, o número de cópias relevantes é sempre no número de réplicas no cluster
 e pode ser customizado pelo parâmetro **w**. Para alterar a configuração de escrita, como 
-por exemplo, basta executar o commando ?w=2.
+por exemplo, basta executar o comando ?w=2.
 
 
 ### <a name="disponibilidade"></a> Disponibilidade
