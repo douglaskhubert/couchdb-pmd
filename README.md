@@ -1,4 +1,4 @@
-# Tutorial Couch DB
+# Tutorial CouchDB
 <p align="center">
   <img width="300" height="300" src="static/couchdb.png?raw=true">
 </p>
@@ -43,11 +43,11 @@ Professora Dra. Sahudy Montenegro González
 
 # <a name="introducao"></a>Introdução
 O CouchDB é um banco de dados open source desenvolvido pela Apache™ desde 2008, sendo um banco
-[orientado à documentos](https://pt.wikipedia.org/wiki/Banco_de_dados_orientado_a_documentos).
+[orientado a documentos](https://en.wikipedia.org/wiki/Document-oriented_database).
 O CouchDB utiliza nativamente **json** para armazenamento de dados, **JavaScript**
 para sua query language, incluindo features como MapReduce e view configuration.
 
-Por padrão, o CouchDB também suporta implementações com **RESTful API's**
+Por padrão, o CouchDB também suporta implementações com [**RESTful API's**](https://en.wikipedia.org/wiki/Representational_state_transfer)
 (e requests via curl, por exemplo), sendo uma alternativa para implementações
 diretas e agnósticas, devido à independência de qualquer necessidade de driver
 ou lib para consumir e utilizar o banco.
@@ -81,7 +81,7 @@ Se as pessoas envolvidas em seu projeto já possuem um conhecimento sólido em
 tecnologias web, como consumo de API's REST, a curva de aprendizagem para o CouchDB
 deverá ser bem tranquila.
 
-Devido ao fato de o CouchDB ser um banco de dados orientado à documentos, também
+Devido ao fato de o CouchDB ser um banco de dados orientado a documentos, também
 pode ser indicado para casos de uso onde existe a necessidade de dados *schemaless*,
 em outras palavras, quando os dados podem ter diferentes estruturas e tipos.
 
@@ -186,7 +186,7 @@ controle de versão regular.
 ### <a name="Quorum"></a> Quorum
 
 Quando falamos de sistemas distribuídos, normalmente temos alguns tipos de problemas
-que são chamados de ["problemas de consenso"](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo),
+que são chamados de ["problemas de consenso"](https://en.wikipedia.org/wiki/Consensus_(computer_science)),
 quando falamos de consenso, também estamos falando de garantir a confiabilidade
 do sistema, no nosso caso, de leituras e escritas. Uma solução bastante conhecida
 para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing)).
@@ -745,4 +745,17 @@ PS.: A resolução dos exercícios estão no arquivo `/cluster-couchdb/insert-da
 # Referências
 
 * [Documentação CouchDB](http://docs.couchdb.org/en/stable/)
-* [DockerHub da imagem do CoachDB](https://hub.docker.com/_/couchdb)
+* [DockerHub da imagem do CouchDB](https://hub.docker.com/_/couchdb)
+* [DB orientado a documentos](https://en.wikipedia.org/wiki/Document-oriented_database)
+* [**RESTful API's**](https://en.wikipedia.org/wiki/Representational_state_transfer)
+* [Teorema CAP](https://en.wikipedia.org/wiki/CAP_theorem)
+* [Propriedades ACID](https://en.wikipedia.org/wiki/ACID)
+* [Git](https://git-scm.com/)
+* [Blobs Binários](https://en.wikipedia.org/wiki/Binary_large_object)
+* [B-tree](https://en.wikipedia.org/wiki/B-tree)
+* [Eric Brewer](https://en.wikipedia.org/wiki/Eric_Brewer_%28scientist%29)
+* [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control#Implementation)
+* [Problemas de Consenso](https://pt.wikipedia.org/wiki/Consenso_Distribu%C3%ADdo)
+* [Quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_computing))
+* [NGInx](https://pt.wikipedia.org/wiki/Nginx)
+* [CouchDB on Ubuntu](https://www.scaleway.com/en/docs/installation-configuration-couchdb-cluster-on-ubuntu/)
