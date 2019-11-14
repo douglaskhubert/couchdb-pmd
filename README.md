@@ -39,7 +39,7 @@ Professora Dra. Sahudy Montenegro González
     * [Map Reduce, Views e Mango](#map-reduce)
 * [Praticando com cluster CouchDB](#praticando)
 * [Exercícios no Cluster](#exercicios-cluster)
-# [Referências](#Referencias)
+* [Referências](#Referencias)
 
 
 
