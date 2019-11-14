@@ -39,6 +39,8 @@ Professora Dra. Sahudy Montenegro González
     * [Map Reduce, Views e Mango](#map-reduce)
 * [Praticando com cluster CouchDB](#praticando)
 * [Exercícios no Cluster](#exercicios-cluster)
+# [Referências](#Referencias">
+
 
 
 # <a name="introducao"></a>Introdução
@@ -742,7 +744,7 @@ em que queremos uma consistência alta. Envie um request com quorum de escrita i
 
 PS.: A resolução dos exercícios estão no arquivo `/cluster-couchdb/insert-data.sh`. Mas tente fazer sozinho ;)
 
-# Referências
+# <a name="Referencias"></a> Referências
 
 * [Documentação CouchDB](http://docs.couchdb.org/en/stable/)
 * [DockerHub da imagem do CouchDB](https://hub.docker.com/_/couchdb)
