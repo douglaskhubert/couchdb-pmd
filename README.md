@@ -195,9 +195,11 @@ para isso é o [quorum](https://en.wikipedia.org/wiki/Quorum_(distributed_comput
 No nosso caso, queremos um quorum de leitura e escrita para garantir que todos
 os nós cheguem em um consenso sobre o que ler e o que escrever.  O CouchDB já
 tem uma fórmula de quorum nativa: um mais metade do número de "cópias
-relevantes" (r=w=((n+1)/2)), tanto para leitura quanto para escrita. As cópias relevantes 
-podem ser definidas diferentemente para leitura e escrita, que pode ser através de request's
-ou através do arquivo de configuração "local.ini".
+relevantes" (r=w=((n+1)/2)), tanto para leitura quanto para escrita. As cópias relevantes
+(número de cópias a serem consultadas para obter o consenso do quorum) podem ser definidas
+diferentemente para leitura e escrita através de requests, o que nos permite exigir um 
+quorum maior ou menor de acordo com o grau de importância e sensibilidade do dado a
+ser gravado ou lido.
 
 Para **leitura**, o CouchDB considera esse número de "cópias relevantes" como o número
 de nós acessíveis do dado que foi requisitado. Por exemplo, se um usuário realiza
