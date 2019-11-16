@@ -11,9 +11,10 @@ services:
       - COUCHDB_PASSWORD=mysecretpassword
 
     networks:
-      default:
+      couchnet:
         aliases:
           - couchdb1.couchnet
+        ipv4_address: 172.10.0.2
 
   couchdb2:
     image: couchdb:2.3.1
@@ -25,9 +26,10 @@ services:
       - COUCHDB_USER=admin 
       - COUCHDB_PASSWORD=mysecretpassword
     networks:
-      default:
+      couchnet:
         aliases:
           - couchdb2.couchnet
+        ipv4_address: 172.10.0.3
 
   couchdb3:
     image: couchdb:2.3.1
@@ -39,11 +41,15 @@ services:
       - COUCHDB_USER=admin 
       - COUCHDB_PASSWORD=mysecretpassword
     networks:
-      default:
+      couchnet:
         aliases:
           - couchdb3.couchnet
+        ipv4_address: 172.10.0.4
+
 
 networks:
-  default:
-    external:
-      name: couchnet
+  couchnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.0.0/16

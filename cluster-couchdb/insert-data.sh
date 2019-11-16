@@ -1,8 +1,8 @@
 #!/bin/bash
 
-HOST1=admin:mysecretpassword@$(docker inspect cluster-couchdb_couchdb1_1 | jq -r '.[].NetworkSettings.Networks | .[].IPAddress'):5984
-HOST2=admin:mysecretpassword@$(docker inspect cluster-couchdb_couchdb2_1 | jq -r '.[].NetworkSettings.Networks | .[].IPAddress'):5984
-HOST3=admin:mysecretpassword@$(docker inspect cluster-couchdb_couchdb3_1 | jq -r '.[].NetworkSettings.Networks | .[].IPAddress'):5984
+HOST1=admin:mysecretpassword@172.10.0.2:5984
+HOST2=admin:mysecretpassword@172.10.0.3:5984
+HOST3=admin:mysecretpassword@172.10.0.4:5984
 
 
 echo Criando banco de dados "pedidos" pelo HOST: $HOST1
